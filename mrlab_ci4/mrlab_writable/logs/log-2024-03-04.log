@@ -1,0 +1,114 @@
+CRITICAL - 2024-03-04 11:40:04 --> Undefined variable $pendtag_anexos
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 190.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(190): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-03-04 11:40:41 --> Undefined variable $rs_tags
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 164.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(164): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-03-04 11:41:07 --> Undefined variable $rs_tags
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 164.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(164): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-03-04 11:41:08 --> Undefined variable $rs_tags
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 164.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(164): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-03-04 11:41:09 --> Undefined variable $rs_tags
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 164.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(164): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+INFO - 2024-03-04 11:42:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2024-03-04 11:42:33 --> Undefined variable $rs_tags
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 164.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(164): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+INFO - 2024-03-04 11:44:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2024-03-04 11:47:56 --> Undefined variable $pendtag_anexos
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 191.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(191): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-03-04 11:48:00 --> Undefined variable $pendtag_anexos
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 191.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(191): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-03-04 11:48:12 --> Undefined variable $pendtag_anexos
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 191.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(191): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+INFO - 2024-03-04 11:48:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2024-03-04 11:48:55 --> Undefined variable $pendtag_anexos
+in FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php on line 191.
+ 1 FCPATH/mrlab_ci4/mrlab_views/pendencias-form.php(191): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/pendencias-form.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Pendencias.php(253): view()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+INFO - 2024-03-04 11:49:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

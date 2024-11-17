@@ -1,0 +1,12 @@
+CRITICAL - 2024-03-27 20:19:21 --> Undefined property: stdClass::$clie_nome_fantasia
+in FCPATH/mrlab_ci4/mrlab_views/servicos.php on line 73.
+ 1 FCPATH/mrlab_ci4/mrlab_views/servicos.php(73): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/View/View.php(213): include('/home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_views/servicos.php')
+ 3 SYSTEMPATH/View/View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH/Common.php(1184): CodeIgniter\View\View->render()
+ 5 APPPATH/Controllers/Servicos.php(83): view()
+ 6 APPPATH/Controllers/Servicos.php(29): App\Controllers\Servicos->filtrar()
+ 7 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Servicos->index()
+ 8 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 9 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+10 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()

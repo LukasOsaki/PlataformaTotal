@@ -1,0 +1,43 @@
+ERROR - 2024-01-09 08:58:01 --> mysqli_sql_exception: Index for table '.\mister_total_servicos\tbl_categorias.MYI' is corrupt; try to repair it in C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\MySQLi\Connection.php(295): mysqli->query('SELECT `PEND`.*...', 0)
+#1 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `PEND`.*...')
+#2 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `PEND`.*...')
+#3 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query('SELECT `PEND`.*...', Array, false)
+#4 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_app\Controllers\Pendencias.php(49): CodeIgniter\Model->__call('get', Array)
+#6 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_app\Controllers\Pendencias.php(28): App\Controllers\Pendencias->filtrar()
+#7 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(934): App\Controllers\Pendencias->index()
+#8 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pendencias))
+#9 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\_JOBS\Total-Servicos\dev\index.php(67): CodeIgniter\CodeIgniter->run()
+#11 {main}
+CRITICAL - 2024-01-09 08:58:01 --> Index for table '.\mister_total_servicos\tbl_categorias.MYI' is corrupt; try to repair it
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 295.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(295): mysqli->query('SELECT `PEND`.*, `CATEG`.`categ_titulo`, `CATEG`.`categ_color`
+FROM `tbl_pendencias` As `PEND`
+LEFT JOIN `tbl_categorias` `CATEG` ON `CATEG`.`categ_id` = `PEND`.`pend_status`
+ORDER BY `PEND`.`pend_id` ASC
+ LIMIT 1000', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `PEND`.*, `CATEG`.`categ_titulo`, `CATEG`.`categ_color`
+FROM `tbl_pendencias` As `PEND`
+LEFT JOIN `tbl_categorias` `CATEG` ON `CATEG`.`categ_id` = `PEND`.`pend_status`
+ORDER BY `PEND`.`pend_id` ASC
+ LIMIT 1000')
+ 3 SYSTEMPATH\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `PEND`.*, `CATEG`.`categ_titulo`, `CATEG`.`categ_color`
+FROM `tbl_pendencias` As `PEND`
+LEFT JOIN `tbl_categorias` `CATEG` ON `CATEG`.`categ_id` = `PEND`.`pend_status`
+ORDER BY `PEND`.`pend_id` ASC
+ LIMIT 1000')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query('SELECT `PEND`.*, `CATEG`.`categ_titulo`, `CATEG`.`categ_color`
+FROM `tbl_pendencias` As `PEND`
+LEFT JOIN `tbl_categorias` `CATEG` ON `CATEG`.`categ_id` = `PEND`.`pend_status`
+ORDER BY `PEND`.`pend_id` ASC
+ LIMIT 1000', [], false)
+ 5 SYSTEMPATH\Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Pendencias.php(49): CodeIgniter\Model->__call('get', [])
+ 7 APPPATH\Controllers\Pendencias.php(28): App\Controllers\Pendencias->filtrar()
+ 8 SYSTEMPATH\CodeIgniter.php(934): App\Controllers\Pendencias->index()
+ 9 SYSTEMPATH\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pendencias))
+10 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()

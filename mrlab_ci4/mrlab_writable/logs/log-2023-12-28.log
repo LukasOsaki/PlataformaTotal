@@ -1,0 +1,11 @@
+CRITICAL - 2023-12-28 09:22:22 --> Invalid file: "painel/templates/template_painel.php"
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 33.
+ 1 SYSTEMPATH\View\View.php(201): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('painel/templates/template_painel.php')
+ 2 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->render('painel/templates/template_painel', [], true)
+ 3 SYSTEMPATH\Common.php(1184): CodeIgniter\View\View->render('/clientes', [], true)
+ 4 APPPATH\Controllers\Clientes.php(50): view('/clientes', [...])
+ 5 APPPATH\Controllers\Clientes.php(22): App\Controllers\Clientes->filtrar()
+ 6 SYSTEMPATH\CodeIgniter.php(934): App\Controllers\Clientes->index()
+ 7 SYSTEMPATH\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Clientes))
+ 8 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()

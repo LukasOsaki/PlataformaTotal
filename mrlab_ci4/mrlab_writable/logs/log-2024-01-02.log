@@ -1,0 +1,124 @@
+CRITICAL - 2024-01-02 10:24:14 --> syntax error, unexpected '=', expecting ']'
+in APPPATH\Controllers\Equipamentos.php on line 85.
+ 1 SYSTEMPATH\Router\Router.php(507): CodeIgniter\Router\AutoRouter->getRoute('equipamentos/form')
+ 2 SYSTEMPATH\Router\Router.php(206): CodeIgniter\Router\Router->autoRoute('equipamentos/form')
+ 3 SYSTEMPATH\CodeIgniter.php(815): CodeIgniter\Router\Router->handle('equipamentos/form')
+ 4 SYSTEMPATH\CodeIgniter.php(449): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+ 5 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-01-02 10:25:04 --> syntax error, unexpected '='
+in APPPATH\Controllers\Equipamentos.php on line 93.
+ 1 SYSTEMPATH\Router\Router.php(507): CodeIgniter\Router\AutoRouter->getRoute('equipamentos/form')
+ 2 SYSTEMPATH\Router\Router.php(206): CodeIgniter\Router\Router->autoRoute('equipamentos/form')
+ 3 SYSTEMPATH\CodeIgniter.php(815): CodeIgniter\Router\Router->handle('equipamentos/form')
+ 4 SYSTEMPATH\CodeIgniter.php(449): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+ 5 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-01-02 10:25:23 --> Class 'App\Models\EquipamentoModel' not found
+in APPPATH\Controllers\Equipamentos.php on line 11.
+ 1 SYSTEMPATH\CodeIgniter.php(906): App\Controllers\Equipamentos->__construct()
+ 2 SYSTEMPATH\CodeIgniter.php(490): CodeIgniter\CodeIgniter->createController()
+ 3 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-01-02 10:25:55 --> Class 'App\Models\EquipamentosModel' not found
+in APPPATH\Controllers\Equipamentos.php on line 11.
+ 1 SYSTEMPATH\CodeIgniter.php(906): App\Controllers\Equipamentos->__construct()
+ 2 SYSTEMPATH\CodeIgniter.php(490): CodeIgniter\CodeIgniter->createController()
+ 3 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()
+ERROR - 2024-01-02 10:12:09 --> mysqli_sql_exception: Unknown column 'clie_ativo' in 'where clause' in C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\MySQLi\Connection.php(295): mysqli->query('SELECT *\nFROM `...', 0)
+#1 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_app\Controllers\Pendencias.php(134): CodeIgniter\Model->__call('get', Array)
+#6 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(934): App\Controllers\Pendencias->form()
+#7 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pendencias))
+#8 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\_JOBS\Total-Servicos\dev\index.php(67): CodeIgniter\CodeIgniter->run()
+#10 {main}
+CRITICAL - 2024-01-02 10:12:09 --> Unknown column 'clie_ativo' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 295.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(295): mysqli->query('SELECT *
+FROM `tbl_equipamentos`
+WHERE `clie_ativo` = 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `tbl_equipamentos`
+WHERE `clie_ativo` = 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `tbl_equipamentos`
+WHERE `clie_ativo` = 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `tbl_equipamentos`
+WHERE `clie_ativo` = :clie_ativo:', [...], false)
+ 5 SYSTEMPATH\Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Pendencias.php(134): CodeIgniter\Model->__call('get', [])
+ 7 SYSTEMPATH\CodeIgniter.php(934): App\Controllers\Pendencias->form()
+ 8 SYSTEMPATH\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pendencias))
+ 9 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-01-02 12:49:36 --> Call to a member function getResult() on null
+in FCPATH\mrlab_ci4\mrlab_views\categorias-form.php on line 95.
+ 1 SYSTEMPATH\View\View.php(213): include()
+ 2 SYSTEMPATH\View\View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 3 SYSTEMPATH\Common.php(1184): CodeIgniter\View\View->render('/categorias-form', [], true)
+ 4 APPPATH\Controllers\Categorias.php(112): view('/categorias-form', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(934): App\Controllers\Categorias->form('1')
+ 6 SYSTEMPATH\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Categorias))
+ 7 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-01-02 13:14:18 --> Call to a member function getResult() on null
+in FCPATH\mrlab_ci4\mrlab_views\pendencias-form.php on line 68.
+ 1 SYSTEMPATH\View\View.php(213): include()
+ 2 SYSTEMPATH\View\View.php(216): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 3 SYSTEMPATH\Common.php(1184): CodeIgniter\View\View->render('/pendencias-form', [], true)
+ 4 APPPATH\Controllers\Pendencias.php(148): view('/pendencias-form', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(934): App\Controllers\Pendencias->form('1')
+ 6 SYSTEMPATH\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pendencias))
+ 7 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()
+ERROR - 2024-01-02 15:49:14 --> mysqli_sql_exception: Unknown column 'PED.pend_status' in 'on clause' in C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\MySQLi\Connection.php(295): mysqli->query('SELECT `PEND`.*...', 0)
+#1 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `PEND`.*...')
+#2 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `PEND`.*...')
+#3 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Database\BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query('SELECT `PEND`.*...', Array, false)
+#4 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_app\Controllers\Pendencias.php(49): CodeIgniter\Model->__call('get', Array)
+#6 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_app\Controllers\Pendencias.php(28): App\Controllers\Pendencias->filtrar()
+#7 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(934): App\Controllers\Pendencias->index()
+#8 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pendencias))
+#9 C:\_JOBS\Total-Servicos\dev\mrlab_ci4\mrlab_system\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\_JOBS\Total-Servicos\dev\index.php(67): CodeIgniter\CodeIgniter->run()
+#11 {main}
+CRITICAL - 2024-01-02 15:49:14 --> Unknown column 'PED.pend_status' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 295.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(295): mysqli->query('SELECT `PEND`.*, `CATEG`.`categ_titulo`
+FROM `tbl_pendencias` As `PEND`
+LEFT JOIN `tbl_categorias` `CATEG` ON `CATEG`.`categ_id` = `PED`.`pend_status`
+ORDER BY `PEND`.`pend_id` ASC
+ LIMIT 1000', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `PEND`.*, `CATEG`.`categ_titulo`
+FROM `tbl_pendencias` As `PEND`
+LEFT JOIN `tbl_categorias` `CATEG` ON `CATEG`.`categ_id` = `PED`.`pend_status`
+ORDER BY `PEND`.`pend_id` ASC
+ LIMIT 1000')
+ 3 SYSTEMPATH\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `PEND`.*, `CATEG`.`categ_titulo`
+FROM `tbl_pendencias` As `PEND`
+LEFT JOIN `tbl_categorias` `CATEG` ON `CATEG`.`categ_id` = `PED`.`pend_status`
+ORDER BY `PEND`.`pend_id` ASC
+ LIMIT 1000')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query('SELECT `PEND`.*, `CATEG`.`categ_titulo`
+FROM `tbl_pendencias` As `PEND`
+LEFT JOIN `tbl_categorias` `CATEG` ON `CATEG`.`categ_id` = `PED`.`pend_status`
+ORDER BY `PEND`.`pend_id` ASC
+ LIMIT 1000', [], false)
+ 5 SYSTEMPATH\Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Pendencias.php(49): CodeIgniter\Model->__call('get', [])
+ 7 APPPATH\Controllers\Pendencias.php(28): App\Controllers\Pendencias->filtrar()
+ 8 SYSTEMPATH\CodeIgniter.php(934): App\Controllers\Pendencias->index()
+ 9 SYSTEMPATH\CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pendencias))
+10 SYSTEMPATH\CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()

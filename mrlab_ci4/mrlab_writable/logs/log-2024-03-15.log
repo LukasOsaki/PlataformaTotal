@@ -1,0 +1,7 @@
+CRITICAL - 2024-03-15 12:46:25 --> Undefined variable $pend_dte_registro
+in APPPATH/Controllers/Servicos.php on line 103.
+ 1 APPPATH/Controllers/Servicos.php(103): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Servicos->form()
+ 3 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 4 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 5 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()

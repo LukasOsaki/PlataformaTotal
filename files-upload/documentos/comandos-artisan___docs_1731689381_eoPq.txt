@@ -1,0 +1,18 @@
+Comandos Artisan
+
+//Liga o servidor
+php artisan serve
+//Cria o controller 
+php artisan make:controller NomeController
+//Cria a migration de tabela
+php artisan make:migration create_nome_tabela_table 
+//Cria a migration de alteração na tabela
+php artisan make:migration add_fk_opcao_to_variacao_documentos_table --table=variacao_documentos
+//roda a migrate
+php artisan migrate
+//Roda todas as migrate do zero
+php artisan migrate:fresh
+//Volta uma migrate
+php artisan migrate:rollback
+//Cria o model
+php artisan make:model NomeDoModel

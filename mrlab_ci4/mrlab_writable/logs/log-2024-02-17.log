@@ -1,0 +1,120 @@
+ERROR - 2024-02-17 16:21:24 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u552714932_usermy'@'2a02:4780:13:1234::44' (using password: YES) in /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php:174
+Stack trace:
+#0 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php(174): mysqli->real_connect()
+#1 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(391): CodeIgniter\Database\MySQLi\Connection->connect()
+#2 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+#3 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+#4 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#5 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(61): CodeIgniter\Model->__call()
+#6 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+#7 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(934): App\Controllers\Login->index()
+#8 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+#9 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+#10 /home/u552714932/domains/plataformatotal.com.br/public_html/index.php(67): CodeIgniter\CodeIgniter->run()
+#11 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'2a02:4780:13:1234::44' (using password: YES) in /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php:218
+Stack trace:
+#0 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(391): CodeIgniter\Database\MySQLi\Connection->connect()
+#1 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+#2 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+#3 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#4 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(61): CodeIgniter\Model->__call()
+#5 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+#6 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(934): App\Controllers\Login->index()
+#7 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+#8 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+#9 /home/u552714932/domains/plataformatotal.com.br/public_html/index.php(67): CodeIgniter\CodeIgniter->run()
+#10 {main}
+CRITICAL - 2024-02-17 16:21:24 --> Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'2a02:4780:13:1234::44' (using password: YES)
+in SYSTEMPATH/Database/BaseConnection.php on line 427.
+ 1 SYSTEMPATH/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+ 4 APPPATH/Controllers/Login.php(61): CodeIgniter\Model->__call()
+ 5 APPPATH/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Login->index()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+ERROR - 2024-02-17 16:45:52 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u552714932_usermy'@'2a02:4780:13:1234::44' (using password: YES) in /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php:174
+Stack trace:
+#0 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php(174): mysqli->real_connect()
+#1 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(391): CodeIgniter\Database\MySQLi\Connection->connect()
+#2 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+#3 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+#4 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#5 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(61): CodeIgniter\Model->__call()
+#6 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+#7 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(934): App\Controllers\Login->index()
+#8 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+#9 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+#10 /home/u552714932/domains/plataformatotal.com.br/public_html/index.php(67): CodeIgniter\CodeIgniter->run()
+#11 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'2a02:4780:13:1234::44' (using password: YES) in /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php:218
+Stack trace:
+#0 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(391): CodeIgniter\Database\MySQLi\Connection->connect()
+#1 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+#2 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+#3 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#4 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(61): CodeIgniter\Model->__call()
+#5 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+#6 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(934): App\Controllers\Login->index()
+#7 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+#8 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+#9 /home/u552714932/domains/plataformatotal.com.br/public_html/index.php(67): CodeIgniter\CodeIgniter->run()
+#10 {main}
+CRITICAL - 2024-02-17 16:45:52 --> Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'2a02:4780:13:1234::44' (using password: YES)
+in SYSTEMPATH/Database/BaseConnection.php on line 427.
+ 1 SYSTEMPATH/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+ 4 APPPATH/Controllers/Login.php(61): CodeIgniter\Model->__call()
+ 5 APPPATH/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Login->index()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
+ERROR - 2024-02-17 16:46:57 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u552714932_usermy'@'2a02:4780:13:1234::44' (using password: YES) in /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php:174
+Stack trace:
+#0 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php(174): mysqli->real_connect()
+#1 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(391): CodeIgniter\Database\MySQLi\Connection->connect()
+#2 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+#3 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+#4 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#5 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(61): CodeIgniter\Model->__call()
+#6 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+#7 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(934): App\Controllers\Login->index()
+#8 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+#9 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+#10 /home/u552714932/domains/plataformatotal.com.br/public_html/index.php(67): CodeIgniter\CodeIgniter->run()
+#11 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'2a02:4780:13:1234::44' (using password: YES) in /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/MySQLi/Connection.php:218
+Stack trace:
+#0 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(391): CodeIgniter\Database\MySQLi\Connection->connect()
+#1 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+#2 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+#3 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+#4 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(61): CodeIgniter\Model->__call()
+#5 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_app/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+#6 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(934): App\Controllers\Login->index()
+#7 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+#8 /home/u552714932/domains/plataformatotal.com.br/public_html/mrlab_ci4/mrlab_system/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+#9 /home/u552714932/domains/plataformatotal.com.br/public_html/index.php(67): CodeIgniter\CodeIgniter->run()
+#10 {main}
+CRITICAL - 2024-02-17 16:46:57 --> Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'2a02:4780:13:1234::44' (using password: YES)
+in SYSTEMPATH/Database/BaseConnection.php on line 427.
+ 1 SYSTEMPATH/Database/BaseConnection.php(574): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(840): CodeIgniter\Database\BaseBuilder->get()
+ 4 APPPATH/Controllers/Login.php(61): CodeIgniter\Model->__call()
+ 5 APPPATH/Controllers/Login.php(22): App\Controllers\Login->loginAuth()
+ 6 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\Login->index()
+ 7 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 9 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
