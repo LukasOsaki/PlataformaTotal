@@ -1,18 +1,23 @@
 <?php
+
 namespace App\Controllers;
+
 use App\Controllers\PainelController;
 
 class Servicos extends PainelController
 {
 	protected $pendMD = null;
+	protected $pendTagMD = null;
+	protected $pendMatMD = null;
 	protected $clieMD = null;
 	protected $eqtoMD = null;
 	protected $categMD = null;
 
-    public function __construct()
-    {
-        $this->pendMD = new \App\Models\PendenciasModel();
+	public function __construct()
+	{
+		$this->pendMD = new \App\Models\PendenciasModel();
 		$this->pendTagMD = new \App\Models\PendenciasTagsModel();
+		$this->pendMatMD = new \App\Models\PendenciasMateriaisModel();
 		$this->clieMD = new \App\Models\ClientesModel();
 		$this->eqtoMD = new \App\Models\EquipamentosModel();
 		$this->categMD = new \App\Models\CategoriasModel();
@@ -21,7 +26,7 @@ class Servicos extends PainelController
 		helper('text');
 
 		$this->data['menu_active'] = 'categorias';
-    }
+	}
 
 
 	public function index()
@@ -33,8 +38,8 @@ class Servicos extends PainelController
 	public function filtrar()
 	{
 		$template = 'servicos';
-		$sessionAdmin_user_nivel = session()->get('admin_nivel'); 
-		if( $sessionAdmin_user_nivel == 'cliente'){
+		$sessionAdmin_user_nivel = session()->get('admin_nivel');
+		if ($sessionAdmin_user_nivel == 'cliente') {
 			$template = 'servicos-cliente';
 		}
 
@@ -53,16 +58,19 @@ class Servicos extends PainelController
 		$this->pendMD->from('tbl_pendencias As PEND', true)
 			->select('PEND.*')
 			->select('TAG.pendtag_tag, TAG.pendtag_tipo_serv, TAG.pendtag_status, TAG.pendtag_dte_registro, TAG.pendtag_dte_instalacao, TAG.pendtag_descricao')
+			->select('MAT.pend_mat_material, MAT.pend_mat_tipo, MAT.pend_mat_observacoes, MAT.pend_mat_qtd, MAT.pend_mat_dte_compra, MAT.pend_mat_dte_disponivel, MAT.pend_mat_dte_utilizado')
 			->select('CLIE.clie_nome_razao, CLIE.clie_nome_fantasia')
 			->select('CATEG.categ_titulo, CATEG.categ_color')
 			->join('tbl_pendencias_tags TAG', 'TAG.pend_id = PEND.pend_id', 'LEFT')
+			->join('tbl_pendencias_materiais MAT', 'MAT.pend_id = PEND.pend_id', 'LEFT')
 			->join('tbl_categorias CATEG', 'CATEG.categ_id = TAG.pendtag_status', 'LEFT')
-			->join('tbl_clientes CLIE', 'CLIE.clie_id = PEND.clie_id', 'LEFT');
+			->join('tbl_clientes CLIE', 'CLIE.clie_id = PEND.clie_id', 'LEFT')
+		;
 
-			if( $sessionAdmin_user_nivel == 'cliente'){
-				$clie_id = (int)session()->get('admin_id');
-				$this->pendMD->where('PEND.clie_id', $clie_id);
-			}
+		if ($sessionAdmin_user_nivel == 'cliente') {
+			$clie_id = (int)session()->get('admin_id');
+			$this->pendMD->where('PEND.clie_id', $clie_id);
+		}
 
 		$query = $this->pendMD->orderBy('PEND.pend_id', 'ASC')
 			// ->limit(1000)
@@ -73,25 +81,23 @@ class Servicos extends PainelController
 		//$query = $this->pendMD->get();
 
 		$this->data['lastQuery'] = $this->pendMD->getLastQuery();
-			//->getCompiledSelect();
+		//->getCompiledSelect();
 
-		if( $query && $query->resultID->num_rows >=1 )
-		{
+		if ($query && $query->resultID->num_rows >= 1) {
 			$this->data['rs_list'] = $query;
 		}
 
-		return view($this->directory .'/'. $template , $this->data);
+		return view($this->directory . '/' . $template, $this->data);
 	}
 
 
-	public function form( $pend_id = 0 )
+	public function form($pend_id = 0)
 	{
-		if ($this->request->getPost())
-		{
+		if ($this->request->getPost()) {
 			$validation =  \Config\Services::validation();
 			$rules = [
 				"clie_id" => [
-					"label" => "Cliente", 
+					"label" => "Cliente",
 					"rules" => "required",
 					'errors' => [
 						'required' => 'Preencha corretamente',
@@ -112,10 +118,13 @@ class Servicos extends PainelController
 				$pend_coment_interno = $this->request->getPost('pend_coment_interno');
 				$pend_observacoes = $this->request->getPost('pend_observacoes');
 				$pend_ativo = $this->request->getPost('pend_ativo');
+				$pend_dte_registro = $this->request->getPost('pend_dte_registro');
+				$pend_dte_instalacao = $this->request->getPost('pend_dte_instalacao');
+				$pend_equipe = $this->request->getPost('pend_equipe');
 
 				$data_db = [
 					'clie_id' => $clie_id,
-					'pend_hashkey' => md5(date("Y-m-d H:i:s") ."-". random_string('alnum', 16)),
+					'pend_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
 					//'eqto_urlpage' => url_title( convert_accented_characters($eqto_titulo), '-', TRUE ),
 					//'pend_dte_registro' => fct_date2bd($pend_dte_registro),
 					//'pend_tipo_serv' => $pend_tipo_serv,
@@ -127,101 +136,149 @@ class Servicos extends PainelController
 					//'pend_dte_instalacao' => fct_date2bd($pend_dte_instalacao),
 					'pend_coment_interno' => $pend_coment_interno,
 					'pend_observacoes' => $pend_observacoes,
+					'pend_dte_registro' => isset($pend_dte_registro) ? fct_date2bd($pend_dte_registro) : null,
+					'pend_dte_instalacao' => isset($pend_dte_instalacao) ? fct_date2bd($pend_dte_instalacao) : null,
+					'pend_equipe' => $pend_equipe,
 					'pend_dte_cadastro' => date("Y-m-d H:i:s"),
 					'pend_dte_alteracao' => date("Y-m-d H:i:s"),
 					'pend_ativo' => (int)$pend_ativo,
 				];
 
 				$queryEdit = $this->pendMD->where('pend_id', $pend_id)->get();
-				if( $queryEdit && $queryEdit->resultID->num_rows >=1 )
-				{
-					unset( $data_db['pend_hashkey'] );
-					unset( $data_db['pend_dte_cadastro'] );
+				if ($queryEdit && $queryEdit->resultID->num_rows >= 1) {
+					unset($data_db['pend_hashkey']);
+					unset($data_db['pend_dte_cadastro']);
 					$qryExecute = $this->pendMD->update($pend_id, $data_db);
-				}else{
+				} else {
 					$pend_id = $this->pendMD->insert($data_db);
 				}
 
 
 				// ------------------------------------------------------------
-				// Valores
+				// Valores Tag
 				// ------------------------------------------------------------
 				$arr_pendtag_tag = $this->request->getPost('pendtag_tag');
-				$arr_pendtag_eqto_id = $this->request->getPost('pendtag_eqto_id');
-				$arr_pendtag_equipamento = $this->request->getPost('pendtag_equipamento');
 
-				$arr_pendtag_dte_registro = $this->request->getPost('pendtag_dte_registro');
-				$arr_pendtag_dte_instalacao = $this->request->getPost('pendtag_dte_instalacao');
 				$arr_pendtag_tipo_serv = $this->request->getPost('pendtag_tipo_serv');
 				$arr_pendtag_status = $this->request->getPost('pendtag_status');
 
 				$arr_pendtag_descricao = $this->request->getPost('pendtag_descricao');
-				$arr_pendtag_observacoes = $this->request->getPost('pendtag_observacoes');
+				$arr_pendtag_retornar = $this->request->getPost('pendtag_retornar');
+				$arr_pendtag_materiais = $this->request->getPost('pendtag_materiais');
+				$arr_pendtag_coment_interno = $this->request->getPost('pendtag_coment_interno');
 				$arr_pendtag_id = $this->request->getPost('pendtag_id');
-				//$arr_pendtag_anexos = $this->request->getPost('pendtag_anexos');
-				//$arr_tvlr_valor = $this->request->getPost('tvlr_valor');
-				//$arr_tvlr_id = $this->request->getPost('tvlr_id');
-				//var_dump( $arr_tvlr_titulo );
-				//exit();
-				if( is_array($arr_pendtag_eqto_id)){
-					foreach ($arr_pendtag_eqto_id as $key => $val) {
+					foreach ($arr_pendtag_id as $key => $val) {
 						//echo('<hr>');
 						$pendtag_eqto_id = (int)$val;
 						$pendtag_tag = $arr_pendtag_tag[$key];
-						$pendtag_equipamento = $arr_pendtag_equipamento[$key];
-						$pendtag_dte_registro = $arr_pendtag_dte_registro[$key];
-						$pendtag_dte_instalacao = $arr_pendtag_dte_instalacao[$key];
 						$pendtag_tipo_serv = $arr_pendtag_tipo_serv[$key];
 						$pendtag_status = $arr_pendtag_status[$key];
 						$pendtag_descricao = $arr_pendtag_descricao[$key];
-						$pendtag_observacoes = $arr_pendtag_observacoes[$key];
+						$pendtag_retornar = $arr_pendtag_retornar[$key];
+						$pendtag_materiais = $arr_pendtag_materiais[$key];
+						$pendtag_coment_interno = $arr_pendtag_coment_interno[$key];
 						$pendtag_id = (int)$arr_pendtag_id[$key];
 
-						if( $pendtag_eqto_id > 0 )
-						{
-							$acaoTAGS = 'INSERT';
-							if( $pendtag_id > 0 ){
-								$query_tag = $this->pendTagMD
-									->where('pendtag_id', $pendtag_id)
-									->where('pend_id', $pend_id)
-									->orderBy('pendtag_id', 'DESC')
-									->limit(1)
-									->get();
-								if( $query_tag && $query_tag->resultID->num_rows >=1 )
-								{
-									$acaoTAGS = 'UPDATE';
-								}
-							}
-							$data_tag_db = [
-								'pend_id' => $pend_id, 
-								'eqto_id' => $pendtag_eqto_id, 
-								'pendtag_hashkey' => md5(date("Y-m-d H:i:s") ."-". random_string('alnum', 16)),
-								'pendtag_dte_registro' => fct_date2bd($pendtag_dte_registro),
-								'pendtag_dte_instalacao' => fct_date2bd($pendtag_dte_instalacao),
-								'pendtag_tipo_serv' => $pendtag_tipo_serv,
-								'pendtag_status' => $pendtag_status,
-								'pendtag_tag' => $pendtag_tag ." | ". $pendtag_equipamento,
-								'pendtag_descricao' => $pendtag_descricao,
-								'pendtag_observacoes' => $pendtag_observacoes,
-								'pendtag_dte_cadastro' => date("Y-m-d H:i:s"),
-								'pendtag_dte_alteracao' => date("Y-m-d H:i:s"),
-								'pendtag_ativo' => 1
-							];
-							if( $acaoTAGS == "INSERT" ){
-								$pendtag_id = $this->pendTagMD->insert($data_tag_db);	
-							}
-							if( $acaoTAGS == "UPDATE" ){	
-								unset( $data_tag_db['pendtag_hashkey'] );
-								unset( $data_tag_db['pendtag_dte_cadastro'] );
-								$qryExecuteTAGS = $this->pendTagMD->update($pendtag_id, $data_tag_db);
-							}
+						$acaoTAGS = 'INSERT';
+						$query_tag = $this->pendTagMD
+							->where('pendtag_id', $pendtag_id)
+							->where('pend_id', $pend_id)
+							->orderBy('pendtag_id', 'DESC')
+							->limit(1)
+							->get();
+						if ($query_tag && $query_tag->resultID->num_rows >= 1) {
+							$acaoTAGS = 'UPDATE';
 						}
+						$data_tag_db = [
+							'pend_id' => $pend_id,
+							'eqto_id' => $pendtag_eqto_id,
+							'pendtag_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
+							'pendtag_tipo_serv' => $pendtag_tipo_serv,
+							'pendtag_status' => $pendtag_status,
+							'pendtag_tag' => $pendtag_tag ,
+							'pendtag_descricao' => $pendtag_descricao,
+							'pendtag_retornar' => $pendtag_retornar,
+							'pendtag_materiais' => $pendtag_materiais,
+							'pendtag_coment_interno' => $pendtag_coment_interno,
+							'pendtag_dte_cadastro' => date("Y-m-d H:i:s"),
+							'pendtag_dte_alteracao' => date("Y-m-d H:i:s"),
+							'pendtag_ativo' => 1
+						];
+						if ($acaoTAGS == "INSERT") {
+							$pendtag_id = $this->pendTagMD->insert($data_tag_db);
+						}
+						if ($acaoTAGS == "UPDATE") {
+							unset($data_tag_db['pendtag_hashkey']);
+							unset($data_tag_db['pendtag_dte_cadastro']);
+							$qryExecuteTAGS = $this->pendTagMD->update($pendtag_id, $data_tag_db);
+						}
+					}
+				// ------------------------------------------------------------
+				// Valores Mat 
+				// ------------------------------------------------------------
+				$arr_pend_mat_material = $this->request->getPost('pend_mat_material');
+				$arr_pend_mat_eqto = $this->request->getPost('pend_mat_eqto');
+				$arr_pend_mat_qtd = $this->request->getPost('pend_mat_qtd');
+				$arr_pend_mat_tipo = $this->request->getPost('pend_mat_tipo');
+				$arr_pend_mat_observacoes = $this->request->getPost('pend_mat_observacoes');
+				$arr_pend_mat_id = $this->request->getPost('pend_mat_id');
+				$arr_pend_mat_dte_compra = $this->request->getPost('pend_mat_dte_compra');
+				$arr_pend_mat_dte_disponivel = $this->request->getPost('pend_mat_dte_disponivel');
+				$arr_pend_mat_dte_utilizado = $this->request->getPost('pend_mat_dte_utilizado');
+
+				foreach ($arr_pend_mat_id as $key => $val) {
+
+					$pend_mat_material = $arr_pend_mat_material[$key];
+					$pend_mat_eqto = $arr_pend_mat_eqto[$key];
+					$pend_mat_tipo = $arr_pend_mat_tipo[$key];
+					$pend_mat_observacoes = $arr_pend_mat_observacoes[$key];
+					$pend_mat_qtd = (int)$arr_pend_mat_qtd[$key];
+					$pend_mat_id = (int)$arr_pend_mat_id[$key];
+					$pend_mat_id = (int)$arr_pend_mat_id[$key];
+					$pend_mat_id = (int)$arr_pend_mat_id[$key];
+					$pend_mat_dte_compra = isset($arr_pend_mat_dte_compra[$key]) ? fct_date2bd($arr_pend_mat_dte_compra[$key]) : null;
+					$pend_mat_dte_disponivel = isset($arr_pend_mat_dte_disponivel[$key]) ? fct_date2bd($arr_pend_mat_dte_disponivel[$key]) : null;
+					$pend_mat_dte_utilizado = isset($arr_pend_mat_dte_utilizado[$key]) ? fct_date2bd($arr_pend_mat_dte_utilizado[$key]) : null;
+
+					$acaoMats = 'INSERT';
+					if ($pend_mat_id > 0) {
+						$query_mat = $this->pendMatMD
+							->where('pend_mat_id', $pend_mat_id)
+							->where('pend_id', $pend_id)
+							->orderBy('pend_mat_id', 'DESC')
+							->limit(1)
+							->get();
+						if ($query_mat && $query_mat->resultID->num_rows >= 1) {
+							$acaoMats = 'UPDATE';
+						}
+					}
+					$data_mat_db = [
+						'pend_id' => $pend_id,
+						'pendtag_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
+						'pend_mat_tipo' => $pend_mat_tipo,
+						'pend_mat_material' => $pend_mat_material,
+						'pend_mat_eqto' => $pend_mat_eqto,
+						'pend_mat_observacoes' => $pend_mat_observacoes,
+						'pend_mat_qtd' => $pend_mat_qtd,
+						'pend_mat_dte_compra' => $pend_mat_dte_compra,
+						'pend_mat_dte_disponivel' => $pend_mat_dte_disponivel,
+						'pend_mat_dte_utilizado' => $pend_mat_dte_utilizado,
+						'pend_mat_dte_cadastro' => date("Y-m-d H:i:s"),
+						'pend_mat_dte_alteracao' => date("Y-m-d H:i:s"),
+						'pend_mat_ativo' => 1
+					];
+					if ($acaoMats == "INSERT") {
+						$pend_mat_id = $this->pendMatMD->insert($data_mat_db);
+					}
+					if ($acaoMats == "UPDATE") {
+						unset($data_mat_db['pend_mat_hashkey']);
+						unset($data_mat_db['pend_mat_dte_cadastro']);
+						$this->pendMatMD->update($pend_mat_id, $data_mat_db);
 					}
 				}
 
-				return $this->response->redirect( site_url('servicos') );
+				return $this->response->redirect(site_url('servicos'));
 				exit();
-
 			} else {
 				$this->data['validation'] = $validation->getErrors();
 			}
@@ -231,9 +288,9 @@ class Servicos extends PainelController
 		$this->pendMD->where('pend_id', $pend_id);
 
 		$template = 'servicos-form';
-		$sessionAdmin_user_nivel = session()->get('admin_nivel'); 
-		
-		if( $sessionAdmin_user_nivel == 'cliente'){
+		$sessionAdmin_user_nivel = session()->get('admin_nivel');
+
+		if ($sessionAdmin_user_nivel == 'cliente') {
 			$template = 'servicos-cliente-form';
 
 			$clie_id = (int)session()->get('admin_id');
@@ -242,8 +299,7 @@ class Servicos extends PainelController
 
 		$query = $this->pendMD->get();
 
-		if( $query && $query->resultID->num_rows >=1 )
-		{
+		if ($query && $query->resultID->num_rows >= 1) {
 			$rs_dados = $query->getRow();
 			$this->data['rs_dados'] = $rs_dados;
 
@@ -253,7 +309,7 @@ class Servicos extends PainelController
 
 
 
-
+			//Retorno das tags
 			$this->pendTagMD->from('tbl_pendencias_tags As TAG', true)
 				->select('TAG.*')
 				->select('EQTO.eqto_tag, EQTO.eqto_titulo')
@@ -262,12 +318,29 @@ class Servicos extends PainelController
 			$this->pendTagMD->orderBy('TAG.pend_id', 'ASC');
 			$query_tags = $this->pendTagMD->get();
 			//$query_tags = $this->pendTagMD->where('pend_id', $pend_id)->get();
-			if( $query_tags && $query_tags->resultID->num_rows >=1 )
-			{
+			if ($query_tags && $query_tags->resultID->num_rows >= 1) {
 				$this->data['rs_tags'] = $query_tags;
 			}
 
+			//Retorno dos materiais utilizados
+			$query_mats_utilizados = $this->pendMatMD
+				->where('pend_id', $pend_id)
+				->where('pend_mat_tipo', 'Utilizado')
+				->orderBy('pend_id', 'ASC')
+				->get();
+			if ($query_mats_utilizados && $query_mats_utilizados->resultID->num_rows >= 1) {
+				$this->data['rs_mats_utilizados'] = $query_mats_utilizados;
+			}
 
+			//Retorno dos materiais solicitados
+			$query_mats_solicitados = $this->pendMatMD
+				->where('pend_id', $pend_id)
+				->where('pend_mat_tipo', 'Solicitado')
+				->orderBy('pend_id', 'ASC')
+				->get();
+			if ($query_mats_solicitados && $query_mats_solicitados->resultID->num_rows >= 1) {
+				$this->data['rs_mats_solicitados'] = $query_mats_solicitados;
+			}
 		}
 
 		//$query_cliente = $this->clieMD->where('clie_ativo', 1)->get();
@@ -283,35 +356,31 @@ class Servicos extends PainelController
 		//}
 
 		$query_status = $this->categMD->where('categ_area', 'pendencias-status')->get();
-		if( $query_status && $query_status->resultID->num_rows >=1 )
-		{
+		if ($query_status && $query_status->resultID->num_rows >= 1) {
 			$this->data['rs_status'] = $query_status;
 		}
 
 		$query_tipo_serv = $this->categMD->where('categ_area', 'pendencias-tipo-serv')->get();
-		if( $query_tipo_serv && $query_tipo_serv->resultID->num_rows >=1 )
-		{
+		if ($query_tipo_serv && $query_tipo_serv->resultID->num_rows >= 1) {
 			$this->data['rs_tipo_serv'] = $query_tipo_serv;
 		}
 
 		$query_clientes = $this->clieMD->where('clie_ativo', '1')->get();
-		if( $query_clientes && $query_clientes->resultID->num_rows >=1 )
-		{
+		if ($query_clientes && $query_clientes->resultID->num_rows >= 1) {
 			$this->data['rs_clientes'] = $query_clientes;
 		}
 
-		return view($this->directory .'/'. $template, $this->data);
+		return view($this->directory . '/' . $template, $this->data);
 	}
 
 
-	public function impressao( $pend_id = 0 )
+	public function impressao($pend_id = 0)
 	{
-		if ($this->request->getPost())
-		{
+		if ($this->request->getPost()) {
 			$validation =  \Config\Services::validation();
 			$rules = [
 				"clie_id" => [
-					"label" => "Cliente", 
+					"label" => "Cliente",
 					"rules" => "required",
 					'errors' => [
 						'required' => 'Preencha corretamente',
@@ -335,7 +404,7 @@ class Servicos extends PainelController
 
 				$data_db = [
 					'clie_id' => $clie_id,
-					'pend_hashkey' => md5(date("Y-m-d H:i:s") ."-". random_string('alnum', 16)),
+					'pend_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
 					//'eqto_urlpage' => url_title( convert_accented_characters($eqto_titulo), '-', TRUE ),
 					//'pend_dte_registro' => fct_date2bd($pend_dte_registro),
 					//'pend_tipo_serv' => $pend_tipo_serv,
@@ -353,12 +422,11 @@ class Servicos extends PainelController
 				];
 
 				$queryEdit = $this->pendMD->where('pend_id', $pend_id)->get();
-				if( $queryEdit && $queryEdit->resultID->num_rows >=1 )
-				{
-					unset( $data_db['pend_hashkey'] );
-					unset( $data_db['pend_dte_cadastro'] );
+				if ($queryEdit && $queryEdit->resultID->num_rows >= 1) {
+					unset($data_db['pend_hashkey']);
+					unset($data_db['pend_dte_cadastro']);
 					$qryExecute = $this->pendMD->update($pend_id, $data_db);
-				}else{
+				} else {
 					$pend_id = $this->pendMD->insert($data_db);
 				}
 
@@ -383,7 +451,7 @@ class Servicos extends PainelController
 				//$arr_tvlr_id = $this->request->getPost('tvlr_id');
 				//var_dump( $arr_tvlr_titulo );
 				//exit();
-				if( is_array($arr_pendtag_eqto_id)){
+				if (is_array($arr_pendtag_eqto_id)) {
 					foreach ($arr_pendtag_eqto_id as $key => $val) {
 						//echo('<hr>');
 						$pendtag_eqto_id = (int)$val;
@@ -397,51 +465,48 @@ class Servicos extends PainelController
 						$pendtag_observacoes = $arr_pendtag_observacoes[$key];
 						$pendtag_id = (int)$arr_pendtag_id[$key];
 
-						if( $pendtag_eqto_id > 0 )
-						{
+						if ($pendtag_eqto_id > 0) {
 							$acaoTAGS = 'INSERT';
-							if( $pendtag_id > 0 ){
+							if ($pendtag_id > 0) {
 								$query_tag = $this->pendTagMD
 									->where('pendtag_id', $pendtag_id)
 									->where('pend_id', $pend_id)
 									->orderBy('pendtag_id', 'DESC')
 									->limit(1)
 									->get();
-								if( $query_tag && $query_tag->resultID->num_rows >=1 )
-								{
+								if ($query_tag && $query_tag->resultID->num_rows >= 1) {
 									$acaoTAGS = 'UPDATE';
 								}
 							}
 							$data_tag_db = [
-								'pend_id' => $pend_id, 
-								'eqto_id' => $pendtag_eqto_id, 
-								'pendtag_hashkey' => md5(date("Y-m-d H:i:s") ."-". random_string('alnum', 16)),
+								'pend_id' => $pend_id,
+								'eqto_id' => $pendtag_eqto_id,
+								'pendtag_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
 								'pendtag_dte_registro' => fct_date2bd($pendtag_dte_registro),
 								'pendtag_dte_instalacao' => fct_date2bd($pendtag_dte_instalacao),
 								'pendtag_tipo_serv' => $pendtag_tipo_serv,
 								'pendtag_status' => $pendtag_status,
-								'pendtag_tag' => $pendtag_tag ." | ". $pendtag_equipamento,
+								'pendtag_tag' => $pendtag_tag . " | " . $pendtag_equipamento,
 								'pendtag_descricao' => $pendtag_descricao,
 								'pendtag_observacoes' => $pendtag_observacoes,
 								'pendtag_dte_cadastro' => date("Y-m-d H:i:s"),
 								'pendtag_dte_alteracao' => date("Y-m-d H:i:s"),
 								'pendtag_ativo' => 1
 							];
-							if( $acaoTAGS == "INSERT" ){
-								$pendtag_id = $this->pendTagMD->insert($data_tag_db);	
+							if ($acaoTAGS == "INSERT") {
+								$pendtag_id = $this->pendTagMD->insert($data_tag_db);
 							}
-							if( $acaoTAGS == "UPDATE" ){	
-								unset( $data_tag_db['pendtag_hashkey'] );
-								unset( $data_tag_db['pendtag_dte_cadastro'] );
+							if ($acaoTAGS == "UPDATE") {
+								unset($data_tag_db['pendtag_hashkey']);
+								unset($data_tag_db['pendtag_dte_cadastro']);
 								$qryExecuteTAGS = $this->pendTagMD->update($pendtag_id, $data_tag_db);
 							}
 						}
 					}
 				}
 
-				return $this->response->redirect( site_url('servicos') );
+				return $this->response->redirect(site_url('servicos'));
 				exit();
-
 			} else {
 				$this->data['validation'] = $validation->getErrors();
 			}
@@ -451,9 +516,9 @@ class Servicos extends PainelController
 		$this->pendMD->where('pend_id', $pend_id);
 
 		$template = 'servicos-impressao';
-		$sessionAdmin_user_nivel = session()->get('admin_nivel'); 
-		
-		if( $sessionAdmin_user_nivel == 'cliente'){
+		$sessionAdmin_user_nivel = session()->get('admin_nivel');
+
+		if ($sessionAdmin_user_nivel == 'cliente') {
 			$template = 'servicos-cliente-form';
 
 			$clie_id = (int)session()->get('admin_id');
@@ -462,8 +527,7 @@ class Servicos extends PainelController
 
 		$query = $this->pendMD->get();
 
-		if( $query && $query->resultID->num_rows >=1 )
-		{
+		if ($query && $query->resultID->num_rows >= 1) {
 			$rs_dados = $query->getRow();
 			$this->data['rs_dados'] = $rs_dados;
 
@@ -482,12 +546,29 @@ class Servicos extends PainelController
 			$this->pendTagMD->orderBy('TAG.pend_id', 'ASC');
 			$query_tags = $this->pendTagMD->get();
 			//$query_tags = $this->pendTagMD->where('pend_id', $pend_id)->get();
-			if( $query_tags && $query_tags->resultID->num_rows >=1 )
-			{
+			if ($query_tags && $query_tags->resultID->num_rows >= 1) {
 				$this->data['rs_tags'] = $query_tags;
 			}
 
+			//Retorno dos materiais utilizados
+			$query_mats_utilizados = $this->pendMatMD
+				->where('pend_id', $pend_id)
+				->where('pend_mat_tipo', 'Utilizado')
+				->orderBy('pend_id', 'ASC')
+				->get();
+			if ($query_mats_utilizados && $query_mats_utilizados->resultID->num_rows >= 1) {
+				$this->data['rs_mats_utilizados'] = $query_mats_utilizados;
+			}
 
+			//Retorno dos materiais solicitados
+			$query_mats_solicitados = $this->pendMatMD
+				->where('pend_id', $pend_id)
+				->where('pend_mat_tipo', 'Solicitado')
+				->orderBy('pend_id', 'ASC')
+				->get();
+			if ($query_mats_solicitados && $query_mats_solicitados->resultID->num_rows >= 1) {
+				$this->data['rs_mats_solicitados'] = $query_mats_solicitados;
+			}
 		}
 
 		//$query_cliente = $this->clieMD->where('clie_ativo', 1)->get();
@@ -503,134 +584,153 @@ class Servicos extends PainelController
 		//}
 
 		$query_status = $this->categMD->where('categ_area', 'pendencias-status')->get();
-		if( $query_status && $query_status->resultID->num_rows >=1 )
-		{
+		if ($query_status && $query_status->resultID->num_rows >= 1) {
 			$this->data['rs_status'] = $query_status;
 		}
 
 		$query_tipo_serv = $this->categMD->where('categ_area', 'pendencias-tipo-serv')->get();
-		if( $query_tipo_serv && $query_tipo_serv->resultID->num_rows >=1 )
-		{
+		if ($query_tipo_serv && $query_tipo_serv->resultID->num_rows >= 1) {
 			$this->data['rs_tipo_serv'] = $query_tipo_serv;
 		}
 
 		$query_clientes = $this->clieMD->where('clie_ativo', '1')->get();
-		if( $query_clientes && $query_clientes->resultID->num_rows >=1 )
-		{
+		if ($query_clientes && $query_clientes->resultID->num_rows >= 1) {
 			$this->data['rs_clientes'] = $query_clientes;
 		}
 
-		return view($this->directory .'/servicos-impressao', $this->data);
+		return view($this->directory . '/servicos-impressao', $this->data);
 	}
 
 
-	public function ajaxform( $action = "" )
+	public function ajaxform($action = "")
 	{
 		$error_num = "1";
 		$error_msg = "Erro inesperado";
 		$redirect = "";
 
 		switch ($action) {
-		case "EXCLUIR-PENDENCIA-TAG" :
+			case "EXCLUIR-PENDENCIA-TAG":
 
-			$pendtag_hashkey = $this->request->getPost('hashkey');
-			$queryDeleteTag = $this->pendTagMD->where('pendtag_hashkey', $pendtag_hashkey)->get();
-			if( $queryDeleteTag && $queryDeleteTag->resultID->num_rows >=1 )
-			{
-				$rs_registro = $queryDeleteTag->getRow();
-				$pendtag_id = (int)$rs_registro->pendtag_id;
+				$pendtag_hashkey = $this->request->getPost('hashkey');
+				$queryDeleteTag = $this->pendTagMD->where('pendtag_hashkey', $pendtag_hashkey)->get();
+				if ($queryDeleteTag && $queryDeleteTag->resultID->num_rows >= 1) {
+					$rs_registro = $queryDeleteTag->getRow();
+					$pendtag_id = (int)$rs_registro->pendtag_id;
 
-				// excluir inscricao
-				$this->pendTagMD->where('pendtag_hashkey', $pendtag_hashkey)->delete();
+					// excluir inscricao
+					$this->pendTagMD->where('pendtag_hashkey', $pendtag_hashkey)->delete();
 
-				$error_num = "0";
-				$error_msg = "Registro excluído com sucesso!";
-				$redirect = "";
-			}
-
-			$arr_return = array(
-				"error_num" => $error_num,
-				"error_msg" => $error_msg,
-			);
-
-			echo( json_encode($arr_return) );
-			exit();
-		break;
-		case "ENVIAR-EMAIL-CADASTRO" :
-
-			$cad_hashkey = $this->request->getPost('cad_hashkey');
-			$query = $this->cadMD->where('cad_hashkey', $cad_hashkey)->get();			
-
-			if( $query && $query->resultID->num_rows >=1 )
-			{
-				$rs = $query->getRow();
-				$cad_id = (int)$rs->cad_id;
-				$cad_email = $rs->cad_email;
-
-				/*
-				* -------------------------------------------------------------
-				* enviando email após confirmação de pagamento
-				* -------------------------------------------------------------
-				**/	
-				self::enviarEmailCadastro($cad_id);				
-
-				$error_num = "0";
-				$error_msg = "E-mail enviado com sucesso!";
-				$redirect = "";				
+					$error_num = "0";
+					$error_msg = "Registro excluído com sucesso!";
+					$redirect = "";
+				}
 
 				$arr_return = array(
 					"error_num" => $error_num,
 					"error_msg" => $error_msg,
 				);
-			}
 
-			echo( json_encode($arr_return) );
-			exit();
-		break;
-		case "GERAR-NOVO-PDF" :
+				echo (json_encode($arr_return));
+				exit();
+				break;
 
-			$cad_hashkey = $this->request->getPost('cad_hashkey');
-			$query = $this->cadMD->where('cad_hashkey', $cad_hashkey)->get();			
+			case "EXCLUIR-PENDENCIA-MAT":
+				$pend_mat_hashkey = $this->request->getPost('hashkey');
+				$queryDeleteTag = $this->pendMatMD->where('pend_mat_hashkey', $pend_mat_hashkey)->get();
+				if ($queryDeleteTag && $queryDeleteTag->resultID->num_rows >= 1) {
+					$rs_registro = $queryDeleteTag->getRow();
+					$pend_mat_id = (int)$rs_registro->pend_mat_id;
 
-			if( $query && $query->resultID->num_rows >=1 )
-			{
-				$rs = $query->getRow();
-				$cad_id = (int)$rs->cad_id;
-				$cad_hashkey = $rs->cad_hashkey;
-				$cad_email = $rs->cad_email;
-				$cad_cpf = $rs->cad_cpf;
-				$cad_nome_completo = $rs->cad_nome_completo;
-				$cad_qrcode = $rs->cad_qrcode;
+					// excluir inscricao
+					$this->pendMatMD->where('pend_mat_hashkey', $pend_mat_hashkey)->delete();
 
-				// caso o Numero do QRCode não exista, geramos um novo
-				if( empty($cad_qrcode) ){
-					helper('text');
-					$num_random = random_string('alnum', 3);
-					$num_random = strtoupper($num_random);
-
-					$rand_id = str_pad($cad_id , 4 , '0' , STR_PAD_LEFT);
-					$cad_qrcode = strtoupper('LCSU'. $rand_id . $num_random);
-
-					$this->cadMD->set('cad_qrsalt', $num_random);
-					$this->cadMD->set('cad_qrcode', $cad_qrcode);
-					$this->cadMD->where('cad_hashkey', $cad_hashkey);
-					$this->cadMD->update();
+					$error_num = "0";
+					$error_msg = "Registro excluído com sucesso!";
+					$redirect = "";
 				}
 
-				/*
+				$arr_return = array(
+					"error_num" => $error_num,
+					"error_msg" => $error_msg,
+				);
+
+				echo (json_encode($arr_return));
+				exit();
+				break;
+
+			case "ENVIAR-EMAIL-CADASTRO":
+
+				$cad_hashkey = $this->request->getPost('cad_hashkey');
+				$query = $this->cadMD->where('cad_hashkey', $cad_hashkey)->get();
+
+				if ($query && $query->resultID->num_rows >= 1) {
+					$rs = $query->getRow();
+					$cad_id = (int)$rs->cad_id;
+					$cad_email = $rs->cad_email;
+
+					/*
+				* -------------------------------------------------------------
+				* enviando email após confirmação de pagamento
+				* -------------------------------------------------------------
+				**/
+					self::enviarEmailCadastro($cad_id);
+
+					$error_num = "0";
+					$error_msg = "E-mail enviado com sucesso!";
+					$redirect = "";
+
+					$arr_return = array(
+						"error_num" => $error_num,
+						"error_msg" => $error_msg,
+					);
+				}
+
+				echo (json_encode($arr_return));
+				exit();
+				break;
+			case "GERAR-NOVO-PDF":
+
+				$cad_hashkey = $this->request->getPost('cad_hashkey');
+				$query = $this->cadMD->where('cad_hashkey', $cad_hashkey)->get();
+
+				if ($query && $query->resultID->num_rows >= 1) {
+					$rs = $query->getRow();
+					$cad_id = (int)$rs->cad_id;
+					$cad_hashkey = $rs->cad_hashkey;
+					$cad_email = $rs->cad_email;
+					$cad_cpf = $rs->cad_cpf;
+					$cad_nome_completo = $rs->cad_nome_completo;
+					$cad_qrcode = $rs->cad_qrcode;
+
+					// caso o Numero do QRCode não exista, geramos um novo
+					if (empty($cad_qrcode)) {
+						helper('text');
+						$num_random = random_string('alnum', 3);
+						$num_random = strtoupper($num_random);
+
+						$rand_id = str_pad($cad_id, 4, '0', STR_PAD_LEFT);
+						$cad_qrcode = strtoupper('LCSU' . $rand_id . $num_random);
+
+						$this->cadMD->set('cad_qrsalt', $num_random);
+						$this->cadMD->set('cad_qrcode', $cad_qrcode);
+						$this->cadMD->where('cad_hashkey', $cad_hashkey);
+						$this->cadMD->update();
+					}
+
+					/*
 				* -------------------------------------------------------------
 				* Gerar o QRCode e PDF
 				* -------------------------------------------------------------
-				**/	
+				**/
 					$libQRCode = new QRCodeLib();
 					$libQRCode->GerarQRCode($cad_qrcode);
 					$libQRCode->GerarPDF($cad_qrcode, $cad_nome_completo);
 
-				/*
+					/*
 				* -------------------------------------------------------------
 				* log
 				* -------------------------------------------------------------
-				**/	
+				**/
 					$fields_log = [];
 					$fields_log['log_ip'] = $_SERVER['REMOTE_ADDR'];
 					$fields_log['log_tipo'] = "admin-gerar-pdf";
@@ -640,20 +740,19 @@ class Servicos extends PainelController
 					$fields_log['cad_email'] = $cad_email;
 					$this->logMD->save_log($fields_log);
 
-				$error_num = "0";
-				$error_msg = "Ingresso gerado com sucesso!";
-				$redirect = "";				
+					$error_num = "0";
+					$error_msg = "Ingresso gerado com sucesso!";
+					$redirect = "";
 
-				$arr_return = array(
-					"error_num" => $error_num,
-					"error_msg" => $error_msg,
-				);
-			}
+					$arr_return = array(
+						"error_num" => $error_num,
+						"error_msg" => $error_msg,
+					);
+				}
 
-			echo( json_encode($arr_return) );
-			exit();
-		break;		
+				echo (json_encode($arr_return));
+				exit();
+				break;
 		}
 	}
-
 }

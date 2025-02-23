@@ -114,13 +114,27 @@ class Database extends Config
         //if (ENVIRONMENT === 'testing') {
         //    $this->defaultGroup = 'tests';
         //}
+        if (PHP_SAPI === 'cli') {
+            // Ambiente CLI
+            $this->defaultGroup = 'default_localhost'; // Ou o grupo apropriado para CLI
+        } else {
+            // Ambiente Web
+            $_CONST_SERVER_NAME = $_SERVER['SERVER_NAME'] ?? 'localhost';
+            if ($_CONST_SERVER_NAME == "localhost") {
+                $this->defaultGroup = 'default_localhost';
+            } else {
+                $this->defaultGroup = 'default_producao';
+            }
+        }
+        
 
-		$_CONST_SERVER_NAME = $_SERVER['SERVER_NAME'];
-		if( $_CONST_SERVER_NAME == "localhost" ){
-			$this->defaultGroup = 'default_localhost';
-		}else{
-			$this->defaultGroup = 'default_producao';
-		}
+
+		// $_CONST_SERVER_NAME = $_SERVER['SERVER_NAME'];
+		// if( $_CONST_SERVER_NAME == "localhost" ){
+		// 	$this->defaultGroup = 'default_localhost';
+		// }else{
+		// 	$this->defaultGroup = 'default_producao';
+		// }
 
     }
 }

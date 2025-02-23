@@ -36,6 +36,10 @@ class PendenciasModel extends Model
 	ALTER TABLE `tbl_pendencias`
 		ADD COLUMN `pend_tipo` INT(11) NULL DEFAULT '0' AFTER `pend_dte_registro`,
 		CHANGE COLUMN `pend_status` `pend_status` INT(11) NULL DEFAULT '0' COLLATE 'utf8mb4_general_ci' AFTER `pend_tipo`;
+
+	ALTER TABLE `tbl_pendencias`
+	ADD COLUMN `pend_equipe` LONGTEXT NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci';
+		
 	*/
 
 	protected $db = null;
@@ -58,6 +62,7 @@ class PendenciasModel extends Model
 		'pend_dte_instalacao',
 		'pend_coment_interno',
 		'pend_observacoes',
+		'pend_equipe',
 		'pend_dte_cadastro',
 		'pend_dte_alteracao',
 		'pend_ativo',

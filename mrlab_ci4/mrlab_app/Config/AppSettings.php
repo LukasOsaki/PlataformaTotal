@@ -84,4 +84,14 @@ class AppSettings extends BaseConfig
 		return $cfg_array;
 	}
 
+	public function getFinanceiroPeriodo()
+	{
+		$cfg_array = [
+			'AVULSO'	=>  ['value' => 'AVULSO', 'label' => 'AVULSO'],
+			'ANUAL'	=>  ['value' => 'ANUAL', 'label' => 'ANUAL'],
+			'MENSAL'	=>  ['value' => 'MENSAL', 'label' => 'MENSAL'],
+		];
+		return $cfg_array;
+	}
+
 }

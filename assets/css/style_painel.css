@@ -197,9 +197,9 @@
 
 	main{
 		position: relative;
-		padding-left: 290px;
+		padding-left: 10px;
 		padding-top: 15px;
-		padding-right: 15px;
+		padding-right: 10px;
 		/*border: 1px dotted orange;*/
 		background-color: #f9f9f9 !important;
 		background: #f7f7fe !important;

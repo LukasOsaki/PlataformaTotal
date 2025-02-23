@@ -30,14 +30,18 @@ class Usuarios extends PainelController
 		$filtro_pdf = '';
 		// filtrar/user:marcio/cliente:123/dini:/dteend:/status:pago
 
-		$uri = service('uri'); // Obter a instância do objeto URI
+		$uri = service('uri'); // Obter a instï¿½ncia do objeto URI
 		$segments = $uri->getSegments();
-		$index = array_search('filtrar', $segments); // Encontrar o índice do segmento "filtrar"
+		$index = array_search('filtrar', $segments); // Encontrar o ï¿½ndice do segmento "filtrar"
 
-		$filteredSegments = array_slice($segments, $index + 1); // Retornar os elementos a partir de $index + 1 até o final
+		$filteredSegments = array_slice($segments, $index + 1); // Retornar os elementos a partir de $index + 1 atï¿½ o final
 
-
-		$this->userMD->orderBy('user_id', 'DESC')
+		$this->userMD
+		->from('tbl_usuarios as USER', true)
+		->select('USER.*')
+		->select('PERM.perm_titulo')
+		->join('tbl_permissoes PERM', 'PERM.perm_id = USER.perm_id', 'left')
+		->orderBy('USER.user_id', 'DESC')
 			->limit(1000);
 		$query = $this->userMD->get();
 
@@ -119,6 +123,7 @@ class Usuarios extends PainelController
 
 
 		$this->permMD->orderBy('perm_titulo', 'ASC')
+		->where('perm_ativo', 1)
 			->limit(1000);
 		$query_permissoes = $this->permMD->get();
 		if( $query_permissoes && $query_permissoes->resultID->num_rows >=1 )

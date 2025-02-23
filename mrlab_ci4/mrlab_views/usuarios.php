@@ -26,7 +26,7 @@
 									<div class="col-12 col-md-6">
 
 										<div class="d-flex justify-content-end">
-											<div style="margin-left: 5px;"><a href="<?php echo(site_url('clientes/form')); ?>" class="btn btn-sm btn-primary">Novo Registro</a></div>
+											<div style="margin-left: 5px;"><a href="<?php echo(site_url('usuarios/form')); ?>" class="btn btn-sm btn-primary">Novo Registro</a></div>
 										</div>
 
 									</div>
@@ -49,6 +49,7 @@
 															<th style="width:50px;">ID</th>
 															<th>Título</th>
 															<th style="width:35%;">E-mail</th>
+															<th style="width:35%;">Perfil</th>
 														</tr>
 													</thead>
 													<tbody>
@@ -60,6 +61,7 @@
 															$user_hashkey = ($row->user_hashkey);
 															$user_nome = ($row->user_nome);
 															$user_email = ($row->user_email);
+															$perm_titulo = ($row->perm_titulo);
 
 															$link_form = site_url('usuarios/form/'. $user_id);
 															$linkGerarPDF = site_url();
@@ -78,6 +80,7 @@
 																<td><?php echo($user_id); ?></td>
 																<td><?php echo($user_nome); ?></td>
 																<td><?php echo($user_email); ?></td>
+																<td><?php echo($perm_titulo); ?></td>
 															</tr>
 														<?php
 														}
