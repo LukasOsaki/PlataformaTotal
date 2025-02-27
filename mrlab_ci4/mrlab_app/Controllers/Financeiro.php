@@ -297,6 +297,7 @@ class Financeiro extends PainelController
 				$finc_status = $this->request->getPost('finc_status');
 				$finc_nr_doc = $this->request->getPost('finc_nr_doc');
 				$finc_ativo = (int)$this->request->getPost('finc_ativo');
+				$finc_modalidade = $this->request->getPost('finc_modalidade');
 
 				$data_db = [
 					'finc_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
@@ -325,8 +326,8 @@ class Financeiro extends PainelController
 					'finc_dte_alteracao' => date("Y-m-d H:i:s"),
 					'finc_ativo' => (int)$finc_ativo,
 					'finc_nr_doc' => $finc_nr_doc,
+					'finc_modalidade' => $finc_modalidade,
 				];
-
 				$queryEdit = $this->fincMD->where('finc_id', $finc_id)->get();
 				if ($queryEdit && $queryEdit->resultID->num_rows >= 1) {
 					unset($data_db['finc_hashkey']);
@@ -418,94 +419,103 @@ class Financeiro extends PainelController
 				],
 			];
 
-			// if ($this->validate($rules)) {
-			$dados_lancamentos = $this->request->getPost('lancamento'); // Array com os lançamentos
-			if (!empty($dados_lancamentos)) {
-				foreach ($dados_lancamentos as $lancamento) {
-					$nr_parcela = (int)$lancamento['finc_nr_parcela'];
-					$nr_parcela_total = (int)$lancamento['finc_nr_parcela_total'];
-					$periodicidade = $lancamento['finc_periodicidade'];
-					$data_vencimento = new DateTime(fct_date2bd($lancamento['finc_dte_vencimento']));
-					if ($periodicidade != "AVULSO") {
-						for ($i = $nr_parcela; $i <= $nr_parcela_total; $i++) {
+			if ($this->validate($rules)) {
+				$dados_lancamentos = $this->request->getPost('lancamento'); // Array com os lançamentos
+				if (!empty($dados_lancamentos)) {
+					foreach ($dados_lancamentos as $lancamento) {
+						$nr_parcela = (int)$lancamento['finc_nr_parcela'];
+						$nr_parcela_total = (int)$lancamento['finc_nr_parcela_total'];
+						$periodicidade = $lancamento['finc_periodicidade'];
+						$data_vencimento = new DateTime(fct_date2bd($lancamento['finc_dte_vencimento']));
+						if ($periodicidade != "AVULSO") {
+							for ($i = $nr_parcela; $i <= $nr_parcela_total; $i++) {
 
+								$data_db = [
+									'finc_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
+									'finc_tipo_id' => $lancamento['finc_tipo_id'],
+									'finc_class_id' => $lancamento['finc_class_id'],
+									'finc_periodicidade' => $periodicidade,
+									'finc_tipo' => $lancamento['finc_tipo'],
+									'finc_nome' => $lancamento['finc_nome'],
+									'finc_centro_custo' => $lancamento['finc_centro_custo'],
+									'finc_nr_parcela' => $i,
+									'finc_nr_parcela_total' => $lancamento['finc_nr_parcela_total'],
+									'finc_valor' => $lancamento['finc_valor'],
+									'finc_dte_vencimento' => $data_vencimento->format('Y-m-d'),
+									'finc_efetuado' => (int)$lancamento['finc_efetuado'],
+									'finc_dte_efetuado' => fct_date2bd($lancamento['finc_dte_efetuado']),
+									'finc_competencia' => $lancamento['finc_competencia'],
+									'finc_dte_pagamento' => fct_date2bd($lancamento['finc_dte_pagamento']),
+									'finc_conta' => $lancamento['finc_conta'],
+									'finc_forma_pagamento' => $lancamento['finc_forma_pagamento'],
+									'finc_observacoes' => $lancamento['finc_observacoes'],
+									'finc_status' => $lancamento['finc_status'],
+									'finc_juros' => $lancamento['finc_juros'],
+									'finc_multa' => $lancamento['finc_multa'],
+									'finc_dte_cadastro' => date("Y-m-d H:i:s"),
+									'finc_dte_alteracao' => date("Y-m-d H:i:s"),
+									'finc_ativo' => 1,
+									'finc_nr_doc' => $lancamento['finc_nr_doc'],
+								];
+
+
+
+								$this->fincMD->insert($data_db);
+								// Incrementar a data conforme periodicidade
+								if ($periodicidade === 'MENSAL') {
+									$data_vencimento->modify('+1 month');
+								} elseif ($periodicidade === 'ANUAL') {
+									$data_vencimento->modify('+1 year');
+								}
+							}
+						} else {
 							$data_db = [
 								'finc_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
 								'finc_tipo_id' => $lancamento['finc_tipo_id'],
 								'finc_class_id' => $lancamento['finc_class_id'],
-								'finc_periodicidade' => $periodicidade,
+								'finc_periodicidade' => $lancamento['finc_periodicidade'],
 								'finc_tipo' => $lancamento['finc_tipo'],
 								'finc_nome' => $lancamento['finc_nome'],
 								'finc_centro_custo' => $lancamento['finc_centro_custo'],
-								'finc_nr_parcela' => $i,
-								'finc_nr_parcela_total' => $lancamento['finc_nr_parcela_total'],
+								'finc_nr_parcela' => (int)$lancamento['finc_nr_parcela'],
+								'finc_nr_parcela_total' => (int)$lancamento['finc_nr_parcela_total'],
 								'finc_valor' => $lancamento['finc_valor'],
-								'finc_dte_vencimento' => $data_vencimento->format('Y-m-d'),
+								'finc_dte_vencimento' => fct_date2bd($lancamento['finc_dte_vencimento']),
 								'finc_efetuado' => (int)$lancamento['finc_efetuado'],
 								'finc_dte_efetuado' => fct_date2bd($lancamento['finc_dte_efetuado']),
 								'finc_competencia' => $lancamento['finc_competencia'],
 								'finc_dte_pagamento' => fct_date2bd($lancamento['finc_dte_pagamento']),
+								// 'finc_anotacoes' => $lancamento['finc_anotacoes'],
 								'finc_conta' => $lancamento['finc_conta'],
 								'finc_forma_pagamento' => $lancamento['finc_forma_pagamento'],
 								'finc_observacoes' => $lancamento['finc_observacoes'],
 								'finc_status' => $lancamento['finc_status'],
-								'finc_juros' => $lancamento['finc_juros'],
-								'finc_multa' => $lancamento['finc_multa'],
 								'finc_dte_cadastro' => date("Y-m-d H:i:s"),
 								'finc_dte_alteracao' => date("Y-m-d H:i:s"),
 								'finc_ativo' => 1,
 								'finc_nr_doc' => $lancamento['finc_nr_doc'],
+								'finc_juros' => $lancamento['finc_juros'],
+								'finc_multa' => $lancamento['finc_multa'],
+								'finc_modalidade' => $lancamento['finc_modalidade'],
 							];
-
-
-
 							$this->fincMD->insert($data_db);
-							// Incrementar a data conforme periodicidade
-							if ($periodicidade === 'MENSAL') {
-								$data_vencimento->modify('+1 month');
-							} elseif ($periodicidade === 'ANUAL') {
-								$data_vencimento->modify('+1 year');
-							}
 						}
-					} else {
-						$data_db = [
-							'finc_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
-							'finc_tipo_id' => $lancamento['finc_tipo_id'],
-							'finc_class_id' => $lancamento['finc_class_id'],
-							'finc_periodicidade' => $lancamento['finc_periodicidade'],
-							'finc_tipo' => $lancamento['finc_tipo'],
-							'finc_nome' => $lancamento['finc_nome'],
-							'finc_centro_custo' => $lancamento['finc_centro_custo'],
-							'finc_nr_parcela' => (int)$lancamento['finc_nr_parcela'],
-							'finc_nr_parcela_total' => (int)$lancamento['finc_nr_parcela_total'],
-							'finc_valor' => $lancamento['finc_valor'],
-							'finc_dte_vencimento' => fct_date2bd($lancamento['finc_dte_vencimento']),
-							'finc_efetuado' => (int)$lancamento['finc_efetuado'],
-							'finc_dte_efetuado' => fct_date2bd($lancamento['finc_dte_efetuado']),
-							'finc_competencia' => $lancamento['finc_competencia'],
-							'finc_dte_pagamento' => fct_date2bd($lancamento['finc_dte_pagamento']),
-							// 'finc_anotacoes' => $lancamento['finc_anotacoes'],
-							'finc_conta' => $lancamento['finc_conta'],
-							'finc_forma_pagamento' => $lancamento['finc_forma_pagamento'],
-							'finc_observacoes' => $lancamento['finc_observacoes'],
-							'finc_status' => $lancamento['finc_status'],
-							'finc_dte_cadastro' => date("Y-m-d H:i:s"),
-							'finc_dte_alteracao' => date("Y-m-d H:i:s"),
-							'finc_ativo' => 1,
-							'finc_nr_doc' => $lancamento['finc_nr_doc'],
-							'finc_juros' => $lancamento['finc_juros'],
-							'finc_multa' => $lancamento['finc_multa'],
-							'finc_modalidade' => $lancamento['finc_modalidade'],
-						];
-						$this->fincMD->insert($data_db);
 					}
 				}
+				return $this->response->redirect(site_url('financeiro'));
+				exit();
+			} else {
+				$errors = $validation->getErrors();
+				$validationWithLabels = [];
+
+				foreach ($rules as $field => $rule) {
+					if (isset($errors[$field])) {
+						$validationWithLabels[$rule['label']] = $errors[$field]; // Usa o label no lugar do campo
+					}
+				}
+
+				$this->data['validation'] = $validationWithLabels; // Agora contém label + erro
 			}
-			return $this->response->redirect(site_url('financeiro'));
-			exit();
-			// } else {
-			//  $this->data['validation'] = $validation->getErrors();
-			// }
 		}
 
 		//Inclui tipo de contas
@@ -696,7 +706,8 @@ class Financeiro extends PainelController
 			->select('CLASS.finc_class_nome')
 			->join('tbl_financeiro_tipos TIPO', 'TIPO.finc_tipo_id = FINC.finc_tipo_id')
 			->join('tbl_financeiro_classificacoes CLASS', 'CLASS.finc_class_id = FINC.finc_class_id')
-			->where('FINC.finc_modalidade', 'EQUIPE');
+			->where('FINC.finc_modalidade', 'EQUIPE')
+			->where('FINC.finc_ativo', '1');
 
 		// Aplica o filtro de status se ele for informado
 		if (!empty($status)) {
@@ -793,7 +804,8 @@ class Financeiro extends PainelController
 		')
 			->join('tbl_financeiro_tipos TIPO', 'TIPO.finc_tipo_id = FINC.finc_tipo_id')
 			->join('tbl_financeiro_classificacoes CLASS', 'CLASS.finc_class_id = FINC.finc_class_id')
-			->where('FINC.finc_modalidade', 'EQUIPE');
+			->where('FINC.finc_modalidade', 'EQUIPE')
+			->where('FINC.finc_ativo', '1');
 
 		// Aplicar filtros
 		if (!empty($status)) {
@@ -967,20 +979,28 @@ class Financeiro extends PainelController
 					$finc_id = $this->fincMD->insert($data_db);
 				}
 
-				return $this->response->redirect(site_url('financeiro'));
+				return $this->response->redirect(site_url('financeiro/equipe'));
 				exit();
 			} else {
-				$this->data['validation'] = $validation->getErrors();
+				$errors = $validation->getErrors();
+				$validationWithLabels = [];
+
+				foreach ($rules as $field => $rule) {
+					if (isset($errors[$field])) {
+						$validationWithLabels[$rule['label']] = $errors[$field]; // Usa o label no lugar do campo
+					}
+				}
+
+				$this->data['validation'] = $validationWithLabels; // Agora contém label + erro
 			}
 		}
 
-	
+
 
 		$query = $this->fincMD->where('finc_id', $finc_id)->get();
 		if ($query && $query->resultID->num_rows >= 1) {
 			$rs_dados = $query->getRow();
 			$this->data['rs_dados'] = $rs_dados;
-
 		}
 
 		//Inclui tipo de contas
@@ -1152,7 +1172,8 @@ class Financeiro extends PainelController
 			->select('CLASS.finc_class_nome')
 			->join('tbl_financeiro_tipos TIPO', 'TIPO.finc_tipo_id = FINC.finc_tipo_id')
 			->join('tbl_financeiro_classificacoes CLASS', 'CLASS.finc_class_id = FINC.finc_class_id')
-			->where('FINC.finc_modalidade', 'GERENCIAL');
+			->where('FINC.finc_modalidade', 'GERENCIAL')
+			->where('FINC.finc_ativo', '1');
 
 		// Aplica o filtro de status se ele for informado
 		if (!empty($status)) {
@@ -1249,7 +1270,8 @@ class Financeiro extends PainelController
 		')
 			->join('tbl_financeiro_tipos TIPO', 'TIPO.finc_tipo_id = FINC.finc_tipo_id')
 			->join('tbl_financeiro_classificacoes CLASS', 'CLASS.finc_class_id = FINC.finc_class_id')
-			->where('FINC.finc_modalidade', 'GERENCIAL');
+			->where('FINC.finc_modalidade', 'GERENCIAL')
+			->where('FINC.finc_ativo', '1');
 
 		// Aplicar filtros
 		if (!empty($status)) {
@@ -1301,7 +1323,7 @@ class Financeiro extends PainelController
 				'Multa',
 				'Juros',
 				'Data Cadastro',
-				'Data Alteração'
+				'Data Alteração',
 			];
 			$sheet->fromArray([$cabecalho], NULL, 'A1');
 
@@ -1359,6 +1381,7 @@ class Financeiro extends PainelController
 			];
 
 			if ($this->validate($rules)) {
+
 				$finc_tipo_id = $this->request->getPost('finc_tipo_id');
 				$finc_class_id = $this->request->getPost('finc_class_id');
 				$finc_periodicidade = $this->request->getPost('finc_periodicidade');
@@ -1382,7 +1405,6 @@ class Financeiro extends PainelController
 				$finc_status = $this->request->getPost('finc_status');
 				$finc_nr_doc = $this->request->getPost('finc_nr_doc');
 				$finc_ativo = (int)$this->request->getPost('finc_ativo');
-
 				$data_db = [
 					'finc_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
 					'finc_tipo_id' => $finc_tipo_id,
@@ -1412,7 +1434,6 @@ class Financeiro extends PainelController
 					'finc_nr_doc' => $finc_nr_doc,
 					'finc_modalidade' => "GERENCIAL",
 				];
-
 				$queryEdit = $this->fincMD->where('finc_id', $finc_id)->get();
 				if ($queryEdit && $queryEdit->resultID->num_rows >= 1) {
 					unset($data_db['finc_hashkey']);
@@ -1426,7 +1447,16 @@ class Financeiro extends PainelController
 				return $this->response->redirect(site_url('financeiro/gerencial'));
 				exit();
 			} else {
-				$this->data['validation'] = $validation->getErrors();
+				$errors = $validation->getErrors();
+				$validationWithLabels = [];
+
+				foreach ($rules as $field => $rule) {
+					if (isset($errors[$field])) {
+						$validationWithLabels[$rule['label']] = $errors[$field]; // Usa o label no lugar do campo
+					}
+				}
+
+				$this->data['validation'] = $validationWithLabels; // Agora contém label + erro
 			}
 		}
 
@@ -1435,8 +1465,6 @@ class Financeiro extends PainelController
 		if ($query && $query->resultID->num_rows >= 1) {
 			$rs_dados = $query->getRow();
 			$this->data['rs_dados'] = $rs_dados;
-
-		
 		}
 
 		//Inclui tipo de contas
@@ -1552,7 +1580,7 @@ class Financeiro extends PainelController
 					}
 				}
 			}
-			return $this->response->redirect(site_url('financeiro'));
+			return $this->response->redirect(site_url('financeiro/gerencial'));
 			exit();
 		}
 

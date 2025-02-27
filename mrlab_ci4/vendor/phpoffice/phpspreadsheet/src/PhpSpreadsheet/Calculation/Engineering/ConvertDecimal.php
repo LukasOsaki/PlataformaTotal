@@ -3,7 +3,7 @@
 namespace PhpOffice\PhpSpreadsheet\Calculation\Engineering;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 
 class ConvertDecimal extends ConvertBase
 {
@@ -22,7 +22,7 @@ class ConvertDecimal extends ConvertBase
      * Excel Function:
      *        DEC2BIN(x[,places])
      *
-     * @param array|bool|float|int|string $value The decimal integer you want to convert. If number is negative,
+     * @param array|string $value The decimal integer you want to convert. If number is negative,
      *                          valid place values are ignored and DEC2BIN returns a 10-character
      *                          (10-bit) binary number in which the most significant bit is the sign
      *                          bit. The remaining 9 bits are magnitude bits. Negative numbers are
@@ -33,7 +33,7 @@ class ConvertDecimal extends ConvertBase
      *                      If DEC2BIN requires more than places characters, it returns the #NUM!
      *                          error value.
      *                      Or can be an array of values
-     * @param null|array|float|int|string $places The number of characters to use. If places is omitted, DEC2BIN uses
+     * @param array|int $places The number of characters to use. If places is omitted, DEC2BIN uses
      *                          the minimum number of characters necessary. Places is useful for
      *                          padding the return value with leading 0s (zeros).
      *                      If places is not an integer, it is truncated.
@@ -45,7 +45,7 @@ class ConvertDecimal extends ConvertBase
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function toBinary($value, $places = null): array|string
+    public static function toBinary($value, $places = null)
     {
         if (is_array($value) || is_array($places)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $places);
@@ -61,7 +61,7 @@ class ConvertDecimal extends ConvertBase
 
         $value = (int) floor((float) $value);
         if ($value > self::LARGEST_BINARY_IN_DECIMAL || $value < self::SMALLEST_BINARY_IN_DECIMAL) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         $r = decbin($value);
@@ -79,7 +79,7 @@ class ConvertDecimal extends ConvertBase
      * Excel Function:
      *        DEC2HEX(x[,places])
      *
-     * @param array|bool|float|int|string $value The decimal integer you want to convert. If number is negative,
+     * @param array|string $value The decimal integer you want to convert. If number is negative,
      *                          places is ignored and DEC2HEX returns a 10-character (40-bit)
      *                          hexadecimal number in which the most significant bit is the sign
      *                          bit. The remaining 39 bits are magnitude bits. Negative numbers
@@ -90,7 +90,7 @@ class ConvertDecimal extends ConvertBase
      *                      If DEC2HEX requires more than places characters, it returns the
      *                          #NUM! error value.
      *                      Or can be an array of values
-     * @param null|array|float|int|string $places The number of characters to use. If places is omitted, DEC2HEX uses
+     * @param array|int $places The number of characters to use. If places is omitted, DEC2HEX uses
      *                          the minimum number of characters necessary. Places is useful for
      *                          padding the return value with leading 0s (zeros).
      *                      If places is not an integer, it is truncated.
@@ -102,7 +102,7 @@ class ConvertDecimal extends ConvertBase
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function toHex($value, $places = null): array|string
+    public static function toHex($value, $places = null)
     {
         if (is_array($value) || is_array($places)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $places);
@@ -118,7 +118,7 @@ class ConvertDecimal extends ConvertBase
 
         $value = floor((float) $value);
         if ($value > self::LARGEST_HEX_IN_DECIMAL || $value < self::SMALLEST_HEX_IN_DECIMAL) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
         $r = strtoupper(dechex((int) $value));
         $r = self::hex32bit($value, $r);
@@ -155,7 +155,7 @@ class ConvertDecimal extends ConvertBase
      * Excel Function:
      *        DEC2OCT(x[,places])
      *
-     * @param array|bool|float|int|string $value The decimal integer you want to convert. If number is negative,
+     * @param array|string $value The decimal integer you want to convert. If number is negative,
      *                          places is ignored and DEC2OCT returns a 10-character (30-bit)
      *                          octal number in which the most significant bit is the sign bit.
      *                          The remaining 29 bits are magnitude bits. Negative numbers are
@@ -178,7 +178,7 @@ class ConvertDecimal extends ConvertBase
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function toOctal($value, $places = null): array|string
+    public static function toOctal($value, $places = null)
     {
         if (is_array($value) || is_array($places)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $places);
@@ -194,7 +194,7 @@ class ConvertDecimal extends ConvertBase
 
         $value = (int) floor((float) $value);
         if ($value > self::LARGEST_OCTAL_IN_DECIMAL || $value < self::SMALLEST_OCTAL_IN_DECIMAL) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
         $r = decoct($value);
         $r = substr($r, -10);
@@ -205,7 +205,7 @@ class ConvertDecimal extends ConvertBase
     protected static function validateDecimal(string $value): string
     {
         if (strlen($value) > preg_match_all('/[-0123456789.]/', $value)) {
-            throw new Exception(ExcelError::VALUE());
+            throw new Exception(Functions::VALUE());
         }
 
         return $value;

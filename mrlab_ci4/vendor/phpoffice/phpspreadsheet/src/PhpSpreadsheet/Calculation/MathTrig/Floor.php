@@ -5,7 +5,6 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Floor
 {
@@ -36,7 +35,7 @@ class Floor
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function floor(mixed $number, mixed $significance = null)
+    public static function floor($number, $significance = null)
     {
         if (is_array($number) || is_array($significance)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $number, $significance);
@@ -75,7 +74,7 @@ class Floor
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function math(mixed $number, mixed $significance = null, mixed $mode = 0)
+    public static function math($number, $significance = null, $mode = 0)
     {
         if (is_array($number) || is_array($significance) || is_array($mode)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $number, $significance, $mode);
@@ -127,11 +126,13 @@ class Floor
 
     /**
      * Avoid Scrutinizer problems concerning complexity.
+     *
+     * @return float|string
      */
-    private static function argumentsOkPrecise(float $number, float $significance): string|float
+    private static function argumentsOkPrecise(float $number, float $significance)
     {
         if ($significance == 0.0) {
-            return ExcelError::DIV0();
+            return Functions::DIV0();
         }
         if ($number == 0.0) {
             return 0.0;
@@ -145,10 +146,10 @@ class Floor
      *
      * @return float|string Rounded Number, or a string containing an error
      */
-    private static function argsOk(float $number, float $significance, int $mode): string|float
+    private static function argsOk(float $number, float $significance, int $mode)
     {
         if (!$significance) {
-            return ExcelError::DIV0();
+            return Functions::DIV0();
         }
         if (!$number) {
             return 0.0;
@@ -170,11 +171,13 @@ class Floor
 
     /**
      * Avoid Scrutinizer problems concerning complexity.
+     *
+     * @return float|string
      */
-    private static function argumentsOk(float $number, float $significance): string|float
+    private static function argumentsOk(float $number, float $significance)
     {
         if ($significance == 0.0) {
-            return ExcelError::DIV0();
+            return Functions::DIV0();
         }
         if ($number == 0.0) {
             return 0.0;
@@ -186,6 +189,6 @@ class Floor
             return floor($number / $significance) * $significance;
         }
 
-        return ExcelError::NAN();
+        return Functions::NAN();
     }
 }

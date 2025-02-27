@@ -5,7 +5,6 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\Financial;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Calculation\TextData\Format;
 
 class Dollar
@@ -25,10 +24,11 @@ class Dollar
      *                            If you omit precision, it is assumed to be 2
      *              Or can be an array of precision values
      *
-     * @return array|string If an array of values is passed for either of the arguments, then the returned result
+     * @return array|string
+     *         If an array of values is passed for either of the arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function format(mixed $number, mixed $precision = 2)
+    public static function format($number, $precision = 2)
     {
         return Format::DOLLAR($number, $precision);
     }
@@ -47,8 +47,10 @@ class Dollar
      *              Or can be an array of values
      * @param mixed $fraction Fraction
      *              Or can be an array of values
+     *
+     * @return array|float|string
      */
-    public static function decimal(mixed $fractionalDollar = null, mixed $fraction = 0): array|string|float
+    public static function decimal($fractionalDollar = null, $fraction = 0)
     {
         if (is_array($fractionalDollar) || is_array($fraction)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $fractionalDollar, $fraction);
@@ -65,10 +67,10 @@ class Dollar
 
         // Additional parameter validations
         if ($fraction < 0) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
         if ($fraction == 0) {
-            return ExcelError::DIV0();
+            return Functions::DIV0();
         }
 
         $dollars = ($fractionalDollar < 0) ? ceil($fractionalDollar) : floor($fractionalDollar);
@@ -93,8 +95,10 @@ class Dollar
      *              Or can be an array of values
      * @param mixed $fraction Fraction
      *              Or can be an array of values
+     *
+     * @return array|float|string
      */
-    public static function fractional(mixed $decimalDollar = null, mixed $fraction = 0): array|string|float
+    public static function fractional($decimalDollar = null, $fraction = 0)
     {
         if (is_array($decimalDollar) || is_array($fraction)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $decimalDollar, $fraction);
@@ -111,10 +115,10 @@ class Dollar
 
         // Additional parameter validations
         if ($fraction < 0) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
         if ($fraction == 0) {
-            return ExcelError::DIV0();
+            return Functions::DIV0();
         }
 
         $dollars = ($decimalDollar < 0.0) ? ceil($decimalDollar) : floor($decimalDollar);

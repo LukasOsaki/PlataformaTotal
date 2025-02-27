@@ -73,6 +73,7 @@ class FinanceiroLancamentos extends PainelController
 			->join('tbl_financeiro_classificacoes CLASS', 'CLASS.finc_class_id = LANC.finc_class_id')
 			->join('tbl_funcionarios FUNC', 'FUNC.func_id = LANC.func_id', 'left')
 			->join('tbl_clientes CLIE', 'CLIE.clie_id = LANC.clie_id', 'left')
+			->where('LANC.finc_lanc_ativo', 1)
 			->orderBy('LANC.finc_lanc_id', 'DESC')
 			->get();
 

@@ -3,7 +3,7 @@
 namespace PhpOffice\PhpSpreadsheet\Calculation\Engineering;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 
 class ConvertOctal extends ConvertBase
 {
@@ -15,7 +15,7 @@ class ConvertOctal extends ConvertBase
      * Excel Function:
      *        OCT2BIN(x[,places])
      *
-     * @param array|bool|float|int|string $value The octal number you want to convert. Number may not
+     * @param array|string $value The octal number you want to convert. Number may not
      *                          contain more than 10 characters. The most significant
      *                          bit of number is the sign bit. The remaining 29 bits
      *                          are magnitude bits. Negative numbers are represented
@@ -44,7 +44,7 @@ class ConvertOctal extends ConvertBase
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function toBinary($value, $places = null): array|string
+    public static function toBinary($value, $places = null)
     {
         if (is_array($value) || is_array($places)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $places);
@@ -69,7 +69,7 @@ class ConvertOctal extends ConvertBase
      * Excel Function:
      *        OCT2DEC(x)
      *
-     * @param array|bool|float|int|string $value The octal number you want to convert. Number may not contain
+     * @param array|string $value The octal number you want to convert. Number may not contain
      *                          more than 10 octal characters (30 bits). The most significant
      *                          bit of number is the sign bit. The remaining 29 bits are
      *                          magnitude bits. Negative numbers are represented using
@@ -118,7 +118,7 @@ class ConvertOctal extends ConvertBase
      * Excel Function:
      *        OCT2HEX(x[,places])
      *
-     * @param array|bool|float|int|string $value The octal number you want to convert. Number may not contain
+     * @param array|string $value The octal number you want to convert. Number may not contain
      *                          more than 10 octal characters (30 bits). The most significant
      *                          bit of number is the sign bit. The remaining 29 bits are
      *                          magnitude bits. Negative numbers are represented using
@@ -142,7 +142,7 @@ class ConvertOctal extends ConvertBase
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function toHex($value, $places = null): array|string
+    public static function toHex($value, $places = null)
     {
         if (is_array($value) || is_array($places)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $places);
@@ -166,7 +166,7 @@ class ConvertOctal extends ConvertBase
     {
         $numDigits = (int) preg_match_all('/[01234567]/', $value);
         if (strlen($value) > $numDigits || $numDigits > 10) {
-            throw new Exception(ExcelError::NAN());
+            throw new Exception(Functions::NAN());
         }
 
         return $value;

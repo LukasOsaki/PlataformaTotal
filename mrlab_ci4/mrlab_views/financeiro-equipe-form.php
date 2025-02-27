@@ -14,6 +14,15 @@ $this->section('content');
 <div id="app">
 	<div class="row align-items-start">
 		<div class="col-12 col-md-12">
+		<?php if (!empty($validation)): ?>
+				<div class="alert alert-danger">
+					<ul>
+						<?php foreach ($validation as $label => $error): ?>
+							<li><strong><?= htmlspecialchars($label) ?>:</strong> <?= htmlspecialchars($error) ?></li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			<?php endif; ?>
 			<?php if (isset($rs_dados->finc_id)) : ?>
 				<form action="<?php echo (current_url()); ?>" method="post" name="formFieldsRegistro" id="formFieldsRegistro" enctype="multipart/form-data">
 
@@ -29,7 +38,7 @@ $this->section('content');
 										<div class="col-12 col-md-6">
 
 											<div class="d-flex justify-content-end">
-												<div style="margin-left: 5px;"><a href="<?php echo (site_url('financeiro')); ?>" class="btn btn-sm btn-warning">Voltar</a></div>
+												<div style="margin-left: 5px;"><a href="<?php echo (site_url('financeiro/equipe')); ?>" class="btn btn-sm btn-warning">Voltar</a></div>
 												<div style="margin-left: 5px;"><input type="submit" class="btn btn-sm btn-success" value="Salvar"></div>
 											</div>
 
@@ -76,7 +85,7 @@ $this->section('content');
 											<div class="form-group">
 												<label class="form-label" for="finc_tipo_id">Tipo de Conta</label>
 
-												<select name="finc_tipo_id" id="finc_tipo_id" class="form-select">
+												<select name="finc_tipo_id" id="finc_tipo_id" class="form-select" disabled>
 													<option value="" translate="no">Selecione</option>
 													<?php
 													foreach ($rs_list_tipo->getResult() as $row) {
@@ -99,7 +108,7 @@ $this->section('content');
 										<div class="col-12 col-md-4">
 											<div class="form-group">
 												<label class="form-label" for="finc_class_id">Classificação</label>
-												<select name="finc_class_id" id="finc_class_id" class="form-select">
+												<select name="finc_class_id" id="finc_class_id" class="form-select" disabled>
 													<option value="" translate="no">Selecione</option>
 													<?php
 													foreach ($rs_list_class->getResult() as $row) {
@@ -118,7 +127,7 @@ $this->section('content');
 										<div class="col-12 col-md-4">
 											<div class="form-group">
 												<label class="form-label" for="finc_periodicidade">Periodicidade</label>
-												<select name="finc_periodicidade" id="finc_periodicidade" class="form-select">
+												<select name="finc_periodicidade" id="finc_periodicidade" class="form-select" disabled>
 													<option value="" translate="no">Selecione</option>
 													<?php
 													foreach ($cfgPeriodos as $row) {
@@ -139,14 +148,14 @@ $this->section('content');
 										<div class="col-12 col-md-6">
 											<div class="form-group">
 												<label class="form-label" for="finc_tipo">Tipo</label>
-												<input type="text" name="finc_tipo" id="finc_tipo" class="form-control"
+												<input type="text" name="finc_tipo" id="finc_tipo" class="form-control" disabled
 													value="<?php echo ((isset($rs_dados->finc_tipo) ? $rs_dados->finc_tipo : "")); ?>" />
 											</div>
 										</div>
 										<div class="col-12 col-md-6">
 											<div class="form-group">
 												<label class="form-label" for="finc_nome">Nome</label>
-												<input type="text" name="finc_nome" id="finc_nome" class="form-control"
+												<input type="text" name="finc_nome" id="finc_nome" class="form-control" disabled
 													value="<?php echo ((isset($rs_dados->finc_nome) ? $rs_dados->finc_nome : "")); ?>" />
 											</div>
 										</div>
@@ -155,21 +164,21 @@ $this->section('content');
 										<div class="col-12 col-md-3">
 											<div class="form-group">
 												<label class="form-label" for="finc_centro_custo">Centro de Custo</label>
-												<input type="text" name="finc_centro_custo" id="finc_centro_custo" class="form-control"
+												<input type="text" name="finc_centro_custo" id="finc_centro_custo" class="form-control" disabled
 													value="<?php echo ((isset($rs_dados->finc_centro_custo) ? $rs_dados->finc_centro_custo : "")); ?>" />
 											</div>
 										</div>
 										<div class="col-12 col-md-3">
 											<div class="form-group">
 												<label class="form-label" for="finc_nr_parcela">N° Parcela</label>
-												<input type="number" name="finc_nr_parcela" id="finc_nr_parcela" class="form-control"
+												<input type="number" name="finc_nr_parcela" id="finc_nr_parcela" class="form-control" disabled
 													value="<?php echo ((isset($rs_dados->finc_nr_parcela) ? $rs_dados->finc_nr_parcela : "")); ?>" />
 											</div>
 										</div>
 										<div class="col-12 col-md-3">
 											<div class="form-group">
 												<label class="form-label" for="finc_nr_parcela_total">N° Total de Parcelas</label>
-												<input type="number" name="finc_nr_parcela_total" id="finc_nr_parcela_total" class="form-control"
+												<input type="number" name="finc_nr_parcela_total" id="finc_nr_parcela_total" class="form-control" disabled
 													value="<?php echo ((isset($rs_dados->finc_nr_parcela_total) ? $rs_dados->finc_nr_parcela_total : "")); ?>" />
 											</div>
 										</div>
@@ -181,7 +190,7 @@ $this->section('content');
 											?>
 											<div class="form-group">
 												<label class="form-label" for="finc_dte_vencimento">Data de Vencimento </label>
-												<input type="text" name="finc_dte_vencimento" id="finc_dte_vencimento" class="form-control mask-date flatpickr_date" value="<?php echo ($finc_dte_vencimento); ?>" />
+												<input disabled type="text" name="finc_dte_vencimento" id="finc_dte_vencimento" class="form-control mask-date flatpickr_date" value="<?php echo ($finc_dte_vencimento); ?>" />
 											</div>
 										</div>
 										<div class="col-12 col-md-4">
@@ -231,14 +240,14 @@ $this->section('content');
 										<div class="col-12 col-md-3">
 											<div class="form-group">
 												<label class="form-label" for="finc_competencia">Competencia</label>
-												<input type="text" name="finc_competencia" id="finc_competencia" class="form-control"
+												<input disabled type="text" name="finc_competencia" id="finc_competencia" class="form-control"
 													value="<?php echo ((isset($rs_dados->finc_competencia) ? $rs_dados->finc_competencia : "")); ?>" />
 											</div>
 										</div>
 										<div class="col-12 col-md-3">
 											<div class="form-group">
 												<label class="form-label" for="finc_nr_doc">N° documento</label>
-												<input type="text" name="finc_nr_doc" id="finc_nr_doc" class="form-control"
+												<input type="text" name="finc_nr_doc" id="finc_nr_doc" class="form-control" disabled
 													value="<?php echo ((isset($rs_dados->finc_nr_doc) ? $rs_dados->finc_nr_doc : "")); ?>" />
 											</div>
 										</div>
@@ -257,14 +266,14 @@ $this->section('content');
 										<div class="col-12 col-md-3">
 											<div class="form-group">
 												<label class="form-label" for="finc_conta">Conta</label>
-												<input type="text" name="finc_conta" id="finc_conta" class="form-control"
+												<input disabled type="text" name="finc_conta" id="finc_conta" class="form-control"
 													value="<?php echo ((isset($rs_dados->finc_conta) ? $rs_dados->finc_conta : "")); ?>" />
 											</div>
 										</div>
 										<div class="col-12 col-md-3">
 											<div class="form-group">
 												<label class="form-label" for="finc_forma_pagamento">Forma de pagamento</label>
-												<input type="text" name="finc_forma_pagamento" id="finc_forma_pagamento" class="form-control"
+												<input disabled type="text" name="finc_forma_pagamento" id="finc_forma_pagamento" class="form-control"
 													value="<?php echo ((isset($rs_dados->finc_forma_pagamento) ? $rs_dados->finc_forma_pagamento : "")); ?>" />
 											</div>
 										</div>
@@ -286,7 +295,7 @@ $this->section('content');
 										<div class="col-12 col-md-12">
 											<div class="form-group">
 												<label class="form-label" for="finc_observacoes">Observações</label>
-												<textarea name="finc_observacoes" id="finc_observacoes" class="form-control" rows="6"><?php echo ((isset($rs_dados->finc_observacoes) ? $rs_dados->finc_observacoes : "")); ?></textarea>
+												<textarea disabled name="finc_observacoes" id="finc_observacoes" class="form-control" rows="6"><?php echo ((isset($rs_dados->finc_observacoes) ? $rs_dados->finc_observacoes : "")); ?></textarea>
 											</div>
 										</div>
 									</div>
@@ -787,6 +796,11 @@ $this->endSection('content');
 
 
 <script>
+	document.querySelector("form").addEventListener("submit", function() {
+		document.getElementById("finc_periodicidade").removeAttribute("disabled");
+		document.getElementById("finc_class_id").removeAttribute("disabled");
+		document.getElementById("finc_tipo_id").removeAttribute("disabled");
+	});
 	var fct_random_string = function(qtdChar) {
 		//function fctRandomString(qtdChar) {
 		var result = '';

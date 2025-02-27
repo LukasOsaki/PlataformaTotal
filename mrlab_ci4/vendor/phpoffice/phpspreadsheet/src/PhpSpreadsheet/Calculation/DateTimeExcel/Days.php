@@ -5,7 +5,7 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel;
 use DateTimeInterface;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 use PhpOffice\PhpSpreadsheet\Shared\Date as SharedDateHelper;
 
 class Days
@@ -31,7 +31,7 @@ class Days
      *         If an array of values is passed for the $startDate or $endDays,arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function between(array|DateTimeInterface|float|int|string $endDate, array|DateTimeInterface|float|int|string $startDate): array|int|string
+    public static function between($endDate, $startDate)
     {
         if (is_array($endDate) || is_array($startDate)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $endDate, $startDate);
@@ -48,7 +48,7 @@ class Days
         $PHPStartDateObject = SharedDateHelper::excelToDateTimeObject($startDate);
         $PHPEndDateObject = SharedDateHelper::excelToDateTimeObject($endDate);
 
-        $days = ExcelError::VALUE();
+        $days = Functions::VALUE();
         $diff = $PHPStartDateObject->diff($PHPEndDateObject);
         if ($diff !== false && !is_bool($diff->days)) {
             $days = $diff->days;

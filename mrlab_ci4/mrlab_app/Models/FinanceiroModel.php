@@ -81,6 +81,7 @@ class FinanceiroModel extends Model
 		'finc_dte_cadastro',
 		'finc_dte_alteracao',
 		'finc_ativo',
+		'finc_modalidade',
 	];
 
     protected function initialize()

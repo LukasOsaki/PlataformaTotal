@@ -7,7 +7,7 @@ use Matrix\Div0Exception as MatrixDiv0Exception;
 use Matrix\Exception as MatrixException;
 use Matrix\Matrix;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 
 class MatrixFunctions
 {
@@ -16,7 +16,7 @@ class MatrixFunctions
      *
      * @param mixed $matrixValues A matrix of values
      */
-    private static function getMatrix(mixed $matrixValues): Matrix
+    private static function getMatrix($matrixValues): Matrix
     {
         $matrixData = [];
         if (!is_array($matrixValues)) {
@@ -31,7 +31,7 @@ class MatrixFunctions
             $column = 0;
             foreach ($matrixRow as $matrixCell) {
                 if ((is_string($matrixCell)) || ($matrixCell === null)) {
-                    throw new Exception(ExcelError::VALUE());
+                    throw new Exception(Functions::VALUE());
                 }
                 $matrixData[$row][$column] = $matrixCell;
                 ++$column;
@@ -57,7 +57,7 @@ class MatrixFunctions
      *
      * @return array|string The resulting array, or a string containing an error
      */
-    public static function sequence(mixed $rows = 1, mixed $columns = 1, mixed $start = 1, mixed $step = 1): string|array
+    public static function sequence($rows = 1, $columns = 1, $start = 1, $step = 1)
     {
         try {
             $rows = (int) Helpers::validateNumericNullSubstitution($rows, 1);
@@ -95,14 +95,14 @@ class MatrixFunctions
      *
      * @return float|string The result, or a string containing an error
      */
-    public static function determinant(mixed $matrixValues)
+    public static function determinant($matrixValues)
     {
         try {
             $matrix = self::getMatrix($matrixValues);
 
             return $matrix->determinant();
-        } catch (MatrixException) {
-            return ExcelError::VALUE();
+        } catch (MatrixException $ex) {
+            return Functions::VALUE();
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -120,16 +120,16 @@ class MatrixFunctions
      *
      * @return array|string The result, or a string containing an error
      */
-    public static function inverse(mixed $matrixValues): array|string
+    public static function inverse($matrixValues)
     {
         try {
             $matrix = self::getMatrix($matrixValues);
 
             return $matrix->inverse()->toArray();
-        } catch (MatrixDiv0Exception) {
-            return ExcelError::NAN();
-        } catch (MatrixException) {
-            return ExcelError::VALUE();
+        } catch (MatrixDiv0Exception $e) {
+            return Functions::NAN();
+        } catch (MatrixException $e) {
+            return Functions::VALUE();
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -143,15 +143,15 @@ class MatrixFunctions
      *
      * @return array|string The result, or a string containing an error
      */
-    public static function multiply(mixed $matrixData1, mixed $matrixData2): array|string
+    public static function multiply($matrixData1, $matrixData2)
     {
         try {
             $matrixA = self::getMatrix($matrixData1);
             $matrixB = self::getMatrix($matrixData2);
 
             return $matrixA->multiply($matrixB)->toArray();
-        } catch (MatrixException) {
-            return ExcelError::VALUE();
+        } catch (MatrixException $ex) {
+            return Functions::VALUE();
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -164,11 +164,11 @@ class MatrixFunctions
      *
      * @return array|string The result, or a string containing an error
      */
-    public static function identity(mixed $dimension)
+    public static function identity($dimension)
     {
         try {
             $dimension = (int) Helpers::validateNumericNullBool($dimension);
-            Helpers::validatePositive($dimension, ExcelError::VALUE());
+            Helpers::validatePositive($dimension, Functions::VALUE());
             $matrix = Builder::createIdentityMatrix($dimension, 0)->toArray();
 
             return $matrix;

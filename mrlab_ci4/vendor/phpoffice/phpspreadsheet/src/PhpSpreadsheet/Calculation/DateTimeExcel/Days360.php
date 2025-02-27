@@ -4,7 +4,7 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel;
 
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 use PhpOffice\PhpSpreadsheet\Shared\Date as SharedDateHelper;
 
 class Days360
@@ -44,7 +44,7 @@ class Days360
      *         If an array of values is passed for the $startDate or $endDays,arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function between(mixed $startDate = 0, mixed $endDate = 0, mixed $method = false): array|string|int
+    public static function between($startDate = 0, $endDate = 0, $method = false)
     {
         if (is_array($startDate) || is_array($endDate) || is_array($method)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $startDate, $endDate, $method);
@@ -58,7 +58,7 @@ class Days360
         }
 
         if (!is_bool($method)) {
-            return ExcelError::VALUE();
+            return Functions::VALUE();
         }
 
         // Execute function

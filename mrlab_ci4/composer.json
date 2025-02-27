@@ -4,9 +4,6 @@
     "description": "The CodeIgniter framework v4",
     "homepage": "https://codeigniter.com",
     "license": "MIT",
-    "require": {
-        "phpoffice/phpspreadsheet": "^4.0"
-    },
     "scripts": {
         "test": "phpunit"
     },
@@ -14,5 +11,8 @@
         "forum": "https://forum.codeigniter.com/",
         "source": "https://github.com/codeigniter4/CodeIgniter4",
         "slack": "https://codeigniterchat.slack.com"
+    },
+    "require": {
+        "phpoffice/phpspreadsheet": "1.22"
     }
 }

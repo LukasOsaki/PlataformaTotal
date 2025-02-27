@@ -4,7 +4,7 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions;
 
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 
 class Fisher
 {
@@ -20,10 +20,11 @@ class Fisher
      * @param mixed $value Float value for which we want the probability
      *                      Or can be an array of values
      *
-     * @return array|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|float|string
+     *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function distribution(mixed $value): array|string|float
+    public static function distribution($value)
     {
         if (is_array($value)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $value);
@@ -36,7 +37,7 @@ class Fisher
         }
 
         if (($value <= -1) || ($value >= 1)) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         return 0.5 * log((1 + $value) / (1 - $value));
@@ -52,10 +53,11 @@ class Fisher
      * @param mixed $probability Float probability at which you want to evaluate the distribution
      *                      Or can be an array of values
      *
-     * @return array|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|float|string
+     *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function inverse(mixed $probability): array|string|float
+    public static function inverse($probability)
     {
         if (is_array($probability)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $probability);

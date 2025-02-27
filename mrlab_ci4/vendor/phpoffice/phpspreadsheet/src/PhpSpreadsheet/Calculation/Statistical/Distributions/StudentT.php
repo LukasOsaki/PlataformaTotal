@@ -5,11 +5,12 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class StudentT
 {
     use ArrayEnabled;
+
+    private const MAX_ITERATIONS = 256;
 
     /**
      * TDIST.
@@ -27,7 +28,7 @@ class StudentT
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function distribution(mixed $value, mixed $degrees, mixed $tails)
+    public static function distribution($value, $degrees, $tails)
     {
         if (is_array($value) || is_array($degrees) || is_array($tails)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $degrees, $tails);
@@ -42,7 +43,7 @@ class StudentT
         }
 
         if (($value < 0) || ($degrees < 1) || ($tails < 1) || ($tails > 2)) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         return self::calculateDistribution($value, $degrees, $tails);
@@ -62,7 +63,7 @@ class StudentT
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function inverse(mixed $probability, mixed $degrees)
+    public static function inverse($probability, $degrees)
     {
         if (is_array($probability) || is_array($degrees)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $probability, $degrees);
@@ -76,17 +77,22 @@ class StudentT
         }
 
         if ($degrees <= 0) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
-        $callback = fn ($value) => self::distribution($value, $degrees, 2);
+        $callback = function ($value) use ($degrees) {
+            return self::distribution($value, $degrees, 2);
+        };
 
         $newtonRaphson = new NewtonRaphson($callback);
 
         return $newtonRaphson->execute($probability);
     }
 
-    private static function calculateDistribution(float $value, int $degrees, int $tails): float
+    /**
+     * @return float
+     */
+    private static function calculateDistribution(float $value, int $degrees, int $tails)
     {
         //    tdist, which finds the probability that corresponds to a given value
         //    of t with k degrees of freedom. This algorithm is translated from a

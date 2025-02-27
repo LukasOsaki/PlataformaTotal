@@ -14,6 +14,15 @@ $this->section('content');
 <div id="app">
 	<div class="row align-items-start">
 		<div class="col-12 col-md-12">
+		<?php if (!empty($validation)): ?>
+				<div class="alert alert-danger">
+					<ul>
+						<?php foreach ($validation as $label => $error): ?>
+							<li><strong><?= htmlspecialchars($label) ?>:</strong> <?= htmlspecialchars($error) ?></li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			<?php endif; ?>
 			<?php if (isset($rs_dados->finc_id)) : ?>
 				<form action="<?php echo (current_url()); ?>" method="post" name="formFieldsRegistro" id="formFieldsRegistro" enctype="multipart/form-data">
 
@@ -72,14 +81,14 @@ $this->section('content');
 									</div>
 									<div class="row" id="tpConta class perd">
 										<div class="col-12 col-md-3">
+										<label class="form-label" for="finc_modalidade">Modalidade</label>
 											<div class="form-group">
-												<label class="form-label" for="finc_modaldiade">Modalidade</label>
 												<select
-													name="finc_modaldiade" id="finc_modaldiade" class="form-control">
+													name="finc_modalidade" id="finc_modalidade" class="form-control">
 													<option value="">Selecione</option>
-													<option value="AMBOS" <?php echo (isset($rs_dados->finc_modaldiade) && $rs_dados->finc_modaldiade == "AMBOS") ? 'selected' : ''; ?>>Ambos</option>
-													<option value="EQUIPE" <?php echo (isset($rs_dados->finc_modaldiade) && $rs_dados->finc_modaldiade == "EQUIPE") ? 'selected' : ''; ?>>Equipe</option>
-													<option value="GERENCIAL" <?php echo (isset($rs_dados->finc_modaldiade) && $rs_dados->finc_modaldiade == "GERENCIAL") ? 'selected' : ''; ?>>Gerencial</option>
+													<option value="AMBOS" <?php echo (isset($rs_dados->finc_modalidade) && $rs_dados->finc_modalidade == "AMBOS") ? 'selected' : ''; ?>>Ambos</option>
+													<option value="EQUIPE" <?php echo (isset($rs_dados->finc_modalidade) && $rs_dados->finc_modalidade == "EQUIPE") ? 'selected' : ''; ?>>Equipe</option>
+													<option value="GERENCIAL" <?php echo (isset($rs_dados->finc_modalidade) && $rs_dados->finc_modalidade == "GERENCIAL") ? 'selected' : ''; ?>>Gerencial</option>
 												</select>
 											</div>
 										</div>

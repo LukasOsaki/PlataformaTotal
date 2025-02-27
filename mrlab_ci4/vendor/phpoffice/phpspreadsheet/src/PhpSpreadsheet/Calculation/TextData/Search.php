@@ -4,7 +4,7 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\TextData;
 
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception as CalcExp;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 
 class Search
@@ -25,15 +25,15 @@ class Search
      *         If an array of values is passed for the $value or $chars arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function sensitive(mixed $needle, mixed $haystack, mixed $offset = 1): array|string|int
+    public static function sensitive($needle, $haystack, $offset = 1)
     {
         if (is_array($needle) || is_array($haystack) || is_array($offset)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $needle, $haystack, $offset);
         }
 
         try {
-            $needle = Helpers::extractString($needle, true);
-            $haystack = Helpers::extractString($haystack, true);
+            $needle = Helpers::extractString($needle);
+            $haystack = Helpers::extractString($haystack);
             $offset = Helpers::extractInt($offset, 1, 0, true);
         } catch (CalcExp $e) {
             return $e->getMessage();
@@ -50,7 +50,7 @@ class Search
             }
         }
 
-        return ExcelError::VALUE();
+        return Functions::VALUE();
     }
 
     /**
@@ -67,15 +67,15 @@ class Search
      *         If an array of values is passed for the $value or $chars arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function insensitive(mixed $needle, mixed $haystack, mixed $offset = 1): array|string|int
+    public static function insensitive($needle, $haystack, $offset = 1)
     {
         if (is_array($needle) || is_array($haystack) || is_array($offset)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $needle, $haystack, $offset);
         }
 
         try {
-            $needle = Helpers::extractString($needle, true);
-            $haystack = Helpers::extractString($haystack, true);
+            $needle = Helpers::extractString($needle);
+            $haystack = Helpers::extractString($haystack);
             $offset = Helpers::extractInt($offset, 1, 0, true);
         } catch (CalcExp $e) {
             return $e->getMessage();
@@ -92,6 +92,6 @@ class Search
             }
         }
 
-        return ExcelError::VALUE();
+        return Functions::VALUE();
     }
 }

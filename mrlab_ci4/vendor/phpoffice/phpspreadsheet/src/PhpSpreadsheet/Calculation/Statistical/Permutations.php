@@ -4,7 +4,7 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\Statistical;
 
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 use PhpOffice\PhpSpreadsheet\Shared\IntOrFloat;
 
@@ -30,7 +30,7 @@ class Permutations
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function PERMUT(mixed $numObjs, mixed $numInSet)
+    public static function PERMUT($numObjs, $numInSet)
     {
         if (is_array($numObjs) || is_array($numInSet)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $numObjs, $numInSet);
@@ -44,19 +44,9 @@ class Permutations
         }
 
         if ($numObjs < $numInSet) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
-        /** @var float|int|string */
-        $result1 = MathTrig\Factorial::fact($numObjs);
-        if (is_string($result1)) {
-            return $result1;
-        }
-        /** @var float|int|string */
-        $result2 = MathTrig\Factorial::fact($numObjs - $numInSet);
-        if (is_string($result2)) {
-            return $result2;
-        }
-        $result = round($result1 / $result2);
+        $result = round(MathTrig\Factorial::fact($numObjs) / MathTrig\Factorial::fact($numObjs - $numInSet));
 
         return IntOrFloat::evaluate($result);
     }
@@ -76,7 +66,7 @@ class Permutations
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function PERMUTATIONA(mixed $numObjs, mixed $numInSet)
+    public static function PERMUTATIONA($numObjs, $numInSet)
     {
         if (is_array($numObjs) || is_array($numInSet)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $numObjs, $numInSet);
@@ -90,7 +80,7 @@ class Permutations
         }
 
         if ($numObjs < 0 || $numInSet < 0) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         $result = $numObjs ** $numInSet;

@@ -45,71 +45,22 @@ class Color extends Supervisor
     const VALIDATE_COLOR_6 = '/^[A-F0-9]{6}$/i';
     const VALIDATE_COLOR_8 = '/^[A-F0-9]{8}$/i';
 
-    private const INDEXED_COLORS = [
-        1 => 'FF000000', //  System Colour #1 - Black
-        2 => 'FFFFFFFF', //  System Colour #2 - White
-        3 => 'FFFF0000', //  System Colour #3 - Red
-        4 => 'FF00FF00', //  System Colour #4 - Green
-        5 => 'FF0000FF', //  System Colour #5 - Blue
-        6 => 'FFFFFF00', //  System Colour #6 - Yellow
-        7 => 'FFFF00FF', //  System Colour #7- Magenta
-        8 => 'FF00FFFF', //  System Colour #8- Cyan
-        9 => 'FF800000', //  Standard Colour #9
-        10 => 'FF008000', //  Standard Colour #10
-        11 => 'FF000080', //  Standard Colour #11
-        12 => 'FF808000', //  Standard Colour #12
-        13 => 'FF800080', //  Standard Colour #13
-        14 => 'FF008080', //  Standard Colour #14
-        15 => 'FFC0C0C0', //  Standard Colour #15
-        16 => 'FF808080', //  Standard Colour #16
-        17 => 'FF9999FF', //  Chart Fill Colour #17
-        18 => 'FF993366', //  Chart Fill Colour #18
-        19 => 'FFFFFFCC', //  Chart Fill Colour #19
-        20 => 'FFCCFFFF', //  Chart Fill Colour #20
-        21 => 'FF660066', //  Chart Fill Colour #21
-        22 => 'FFFF8080', //  Chart Fill Colour #22
-        23 => 'FF0066CC', //  Chart Fill Colour #23
-        24 => 'FFCCCCFF', //  Chart Fill Colour #24
-        25 => 'FF000080', //  Chart Line Colour #25
-        26 => 'FFFF00FF', //  Chart Line Colour #26
-        27 => 'FFFFFF00', //  Chart Line Colour #27
-        28 => 'FF00FFFF', //  Chart Line Colour #28
-        29 => 'FF800080', //  Chart Line Colour #29
-        30 => 'FF800000', //  Chart Line Colour #30
-        31 => 'FF008080', //  Chart Line Colour #31
-        32 => 'FF0000FF', //  Chart Line Colour #32
-        33 => 'FF00CCFF', //  Standard Colour #33
-        34 => 'FFCCFFFF', //  Standard Colour #34
-        35 => 'FFCCFFCC', //  Standard Colour #35
-        36 => 'FFFFFF99', //  Standard Colour #36
-        37 => 'FF99CCFF', //  Standard Colour #37
-        38 => 'FFFF99CC', //  Standard Colour #38
-        39 => 'FFCC99FF', //  Standard Colour #39
-        40 => 'FFFFCC99', //  Standard Colour #40
-        41 => 'FF3366FF', //  Standard Colour #41
-        42 => 'FF33CCCC', //  Standard Colour #42
-        43 => 'FF99CC00', //  Standard Colour #43
-        44 => 'FFFFCC00', //  Standard Colour #44
-        45 => 'FFFF9900', //  Standard Colour #45
-        46 => 'FFFF6600', //  Standard Colour #46
-        47 => 'FF666699', //  Standard Colour #47
-        48 => 'FF969696', //  Standard Colour #48
-        49 => 'FF003366', //  Standard Colour #49
-        50 => 'FF339966', //  Standard Colour #50
-        51 => 'FF003300', //  Standard Colour #51
-        52 => 'FF333300', //  Standard Colour #52
-        53 => 'FF993300', //  Standard Colour #53
-        54 => 'FF993366', //  Standard Colour #54
-        55 => 'FF333399', //  Standard Colour #55
-        56 => 'FF333333', //  Standard Colour #56
-    ];
+    /**
+     * Indexed colors array.
+     *
+     * @var array
+     */
+    protected static $indexedColors;
 
     /**
      * ARGB - Alpha RGB.
+     *
+     * @var null|string
      */
-    protected ?string $argb = null;
+    protected $argb;
 
-    private bool $hasChanged = false;
+    /** @var bool */
+    private $hasChanged = false;
 
     /**
      * Create a new Color.
@@ -122,7 +73,7 @@ class Color extends Supervisor
      *                                    Leave this value at default unless you understand exactly what
      *                                        its ramifications are
      */
-    public function __construct(string $colorValue = self::COLOR_BLACK, bool $isSupervisor = false, bool $isConditional = false)
+    public function __construct($colorValue = self::COLOR_BLACK, $isSupervisor = false, $isConditional = false)
     {
         //    Supervisor?
         parent::__construct($isSupervisor);
@@ -136,10 +87,12 @@ class Color extends Supervisor
     /**
      * Get the shared style component for the currently active cell in currently active sheet.
      * Only used for style supervisor.
+     *
+     * @return Color
      */
-    public function getSharedComponent(): self
+    public function getSharedComponent()
     {
-        /** @var Style $parent */
+        /** @var Style */
         $parent = $this->parent;
         /** @var Border|Fill $sharedComponent */
         $sharedComponent = $parent->getSharedComponent();
@@ -156,10 +109,14 @@ class Color extends Supervisor
 
     /**
      * Build style array from subcomponents.
+     *
+     * @param array $array
+     *
+     * @return array
      */
-    public function getStyleArray(array $array): array
+    public function getStyleArray($array)
     {
-        /** @var Style $parent */
+        /** @var Style */
         $parent = $this->parent;
 
         return $parent->getStyleArray([$this->parentPropertyName => $array]);
@@ -176,7 +133,7 @@ class Color extends Supervisor
      *
      * @return $this
      */
-    public function applyFromArray(array $styleArray): static
+    public function applyFromArray(array $styleArray)
     {
         if ($this->isSupervisor) {
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($this->getStyleArray($styleArray));
@@ -226,18 +183,16 @@ class Color extends Supervisor
     /**
      * Set ARGB.
      *
-     * @param ?string $colorValue  ARGB value, or a named color
+     * @param string $colorValue  ARGB value, or a named color
      *
      * @return $this
      */
-    public function setARGB(?string $colorValue = self::COLOR_BLACK, bool $nullStringOkay = false): static
+    public function setARGB(?string $colorValue = self::COLOR_BLACK)
     {
         $this->hasChanged = true;
-        if (!$nullStringOkay || $colorValue !== '') {
-            $colorValue = $this->validateColor($colorValue);
-            if ($colorValue === '') {
-                return $this;
-            }
+        $colorValue = $this->validateColor($colorValue);
+        if ($colorValue === '') {
+            return $this;
         }
 
         if ($this->isSupervisor) {
@@ -265,11 +220,11 @@ class Color extends Supervisor
     /**
      * Set RGB.
      *
-     * @param ?string $colorValue RGB value, or a named color
+     * @param string $colorValue RGB value, or a named color
      *
      * @return $this
      */
-    public function setRGB(?string $colorValue = self::COLOR_BLACK): static
+    public function setRGB(?string $colorValue = self::COLOR_BLACK)
     {
         return $this->setARGB($colorValue);
     }
@@ -284,12 +239,9 @@ class Color extends Supervisor
      *
      * @return int|string The extracted colour component
      */
-    private static function getColourComponent(string $rgbValue, int $offset, bool $hex = true): string|int
+    private static function getColourComponent($rgbValue, $offset, $hex = true)
     {
-        $colour = substr($rgbValue, $offset, 2) ?: '';
-        if (preg_match('/^[0-9a-f]{2}$/i', $colour) !== 1) {
-            $colour = '00';
-        }
+        $colour = substr($rgbValue, $offset, 2);
 
         return ($hex) ? $colour : (int) hexdec($colour);
     }
@@ -303,7 +255,7 @@ class Color extends Supervisor
      *
      * @return int|string The red colour component
      */
-    public static function getRed(string $rgbValue, bool $hex = true)
+    public static function getRed($rgbValue, $hex = true)
     {
         return self::getColourComponent($rgbValue, strlen($rgbValue) - 6, $hex);
     }
@@ -317,7 +269,7 @@ class Color extends Supervisor
      *
      * @return int|string The green colour component
      */
-    public static function getGreen(string $rgbValue, bool $hex = true)
+    public static function getGreen($rgbValue, $hex = true)
     {
         return self::getColourComponent($rgbValue, strlen($rgbValue) - 4, $hex);
     }
@@ -331,7 +283,7 @@ class Color extends Supervisor
      *
      * @return int|string The blue colour component
      */
-    public static function getBlue(string $rgbValue, bool $hex = true)
+    public static function getBlue($rgbValue, $hex = true)
     {
         return self::getColourComponent($rgbValue, strlen($rgbValue) - 2, $hex);
     }
@@ -344,7 +296,7 @@ class Color extends Supervisor
      *
      * @return string The adjusted colour as an RGBA or RGB value (e.g. FF00CCCC or CCDDEE)
      */
-    public static function changeBrightness(string $hexColourValue, float $adjustPercentage): string
+    public static function changeBrightness($hexColourValue, $adjustPercentage)
     {
         $rgba = (strlen($hexColourValue) === 8);
         $adjustPercentage = max(-1.0, min(1.0, $adjustPercentage));
@@ -355,8 +307,23 @@ class Color extends Supervisor
         $green = self::getGreen($hexColourValue, false);
         /** @var int $blue */
         $blue = self::getBlue($hexColourValue, false);
+        if ($adjustPercentage > 0) {
+            $red += (255 - $red) * $adjustPercentage;
+            $green += (255 - $green) * $adjustPercentage;
+            $blue += (255 - $blue) * $adjustPercentage;
+        } else {
+            $red += $red * $adjustPercentage;
+            $green += $green * $adjustPercentage;
+            $blue += $blue * $adjustPercentage;
+        }
 
-        return (($rgba) ? 'FF' : '') . RgbTint::rgbAndTintToRgb($red, $green, $blue, $adjustPercentage);
+        $rgb = strtoupper(
+            str_pad(dechex((int) $red), 2, '0', 0) .
+            str_pad(dechex((int) $green), 2, '0', 0) .
+            str_pad(dechex((int) $blue), 2, '0', 0)
+        );
+
+        return (($rgba) ? 'FF' : '') . $rgb;
     }
 
     /**
@@ -365,20 +332,78 @@ class Color extends Supervisor
      * @param int $colorIndex Index entry point into the colour array
      * @param bool $background Flag to indicate whether default background or foreground colour
      *                                            should be returned if the indexed colour doesn't exist
+     *
+     * @return Color
      */
-    public static function indexedColor(int $colorIndex, bool $background = false, ?array $palette = null): self
+    public static function indexedColor($colorIndex, $background = false): self
     {
         // Clean parameter
         $colorIndex = (int) $colorIndex;
 
-        if (empty($palette)) {
-            if (isset(self::INDEXED_COLORS[$colorIndex])) {
-                return new self(self::INDEXED_COLORS[$colorIndex]);
-            }
-        } else {
-            if (isset($palette[$colorIndex])) {
-                return new self($palette[$colorIndex]);
-            }
+        // Indexed colors
+        if (self::$indexedColors === null) {
+            self::$indexedColors = [
+                1 => 'FF000000', //  System Colour #1 - Black
+                2 => 'FFFFFFFF', //  System Colour #2 - White
+                3 => 'FFFF0000', //  System Colour #3 - Red
+                4 => 'FF00FF00', //  System Colour #4 - Green
+                5 => 'FF0000FF', //  System Colour #5 - Blue
+                6 => 'FFFFFF00', //  System Colour #6 - Yellow
+                7 => 'FFFF00FF', //  System Colour #7- Magenta
+                8 => 'FF00FFFF', //  System Colour #8- Cyan
+                9 => 'FF800000', //  Standard Colour #9
+                10 => 'FF008000', //  Standard Colour #10
+                11 => 'FF000080', //  Standard Colour #11
+                12 => 'FF808000', //  Standard Colour #12
+                13 => 'FF800080', //  Standard Colour #13
+                14 => 'FF008080', //  Standard Colour #14
+                15 => 'FFC0C0C0', //  Standard Colour #15
+                16 => 'FF808080', //  Standard Colour #16
+                17 => 'FF9999FF', //  Chart Fill Colour #17
+                18 => 'FF993366', //  Chart Fill Colour #18
+                19 => 'FFFFFFCC', //  Chart Fill Colour #19
+                20 => 'FFCCFFFF', //  Chart Fill Colour #20
+                21 => 'FF660066', //  Chart Fill Colour #21
+                22 => 'FFFF8080', //  Chart Fill Colour #22
+                23 => 'FF0066CC', //  Chart Fill Colour #23
+                24 => 'FFCCCCFF', //  Chart Fill Colour #24
+                25 => 'FF000080', //  Chart Line Colour #25
+                26 => 'FFFF00FF', //  Chart Line Colour #26
+                27 => 'FFFFFF00', //  Chart Line Colour #27
+                28 => 'FF00FFFF', //  Chart Line Colour #28
+                29 => 'FF800080', //  Chart Line Colour #29
+                30 => 'FF800000', //  Chart Line Colour #30
+                31 => 'FF008080', //  Chart Line Colour #31
+                32 => 'FF0000FF', //  Chart Line Colour #32
+                33 => 'FF00CCFF', //  Standard Colour #33
+                34 => 'FFCCFFFF', //  Standard Colour #34
+                35 => 'FFCCFFCC', //  Standard Colour #35
+                36 => 'FFFFFF99', //  Standard Colour #36
+                37 => 'FF99CCFF', //  Standard Colour #37
+                38 => 'FFFF99CC', //  Standard Colour #38
+                39 => 'FFCC99FF', //  Standard Colour #39
+                40 => 'FFFFCC99', //  Standard Colour #40
+                41 => 'FF3366FF', //  Standard Colour #41
+                42 => 'FF33CCCC', //  Standard Colour #42
+                43 => 'FF99CC00', //  Standard Colour #43
+                44 => 'FFFFCC00', //  Standard Colour #44
+                45 => 'FFFF9900', //  Standard Colour #45
+                46 => 'FFFF6600', //  Standard Colour #46
+                47 => 'FF666699', //  Standard Colour #47
+                48 => 'FF969696', //  Standard Colour #48
+                49 => 'FF003366', //  Standard Colour #49
+                50 => 'FF339966', //  Standard Colour #50
+                51 => 'FF003300', //  Standard Colour #51
+                52 => 'FF333300', //  Standard Colour #52
+                53 => 'FF993300', //  Standard Colour #53
+                54 => 'FF993366', //  Standard Colour #54
+                55 => 'FF333399', //  Standard Colour #55
+                56 => 'FF333333', //  Standard Colour #56
+            ];
+        }
+
+        if (isset(self::$indexedColors[$colorIndex])) {
+            return new self(self::$indexedColors[$colorIndex]);
         }
 
         return ($background) ? new self(self::COLOR_WHITE) : new self(self::COLOR_BLACK);
@@ -396,8 +421,8 @@ class Color extends Supervisor
         }
 
         return md5(
-            $this->argb
-            . __CLASS__
+            $this->argb .
+            __CLASS__
         );
     }
 
