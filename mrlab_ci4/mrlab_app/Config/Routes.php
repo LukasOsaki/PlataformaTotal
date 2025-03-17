@@ -102,9 +102,15 @@ $routes->get('/', 'Dashboard::index', ["filter" => "loginAdmin"]);
 		$routes->match(['get', 'post'], 'form', 'Servicos::form', ["filter" => "loginAdmin"]);
 		$routes->match(['get', 'post'], 'form/(:num)', 'Servicos::form/$1', ["filter" => "loginAdmin"]);
 		$routes->match(['post', 'add'], 'ajaxform/(.+)', 'Servicos::ajaxform/$1', ["filter" => "loginAdmin"]);
-
+		$routes->match(['get', 'post'], 'exportar', 'Servicos::exportar', ["filter" => "loginAdmin"]);
 		$routes->match(['get', 'post'], 'impressao/(:num)', 'Servicos::impressao/$1', ["filter" => "loginAdmin"]);
 	});
+
+	$routes->group('api', ['namespace' => 'App\Controllers'], function ($routes) {
+		$routes->get('servicos', 'Servicos::filtrarApi');
+		$routes->get('clientes', 'Clientes::filtrarApi');
+	});
+	// $routes->get('api/financeiro/filtrar', 'Financeiro::filtrarApi');
 
 
 

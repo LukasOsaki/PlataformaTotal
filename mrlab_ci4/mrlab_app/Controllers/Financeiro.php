@@ -159,6 +159,7 @@ class Financeiro extends PainelController
 		FINC.finc_juros, 
 		FINC.finc_dte_cadastro, 
 		FINC.finc_dte_alteracao, 
+		FINC.finc_ativo
 		')
 			->join('tbl_financeiro_tipos TIPO', 'TIPO.finc_tipo_id = FINC.finc_tipo_id')
 			->join('tbl_financeiro_classificacoes CLASS', 'CLASS.finc_class_id = FINC.finc_class_id');
@@ -213,7 +214,8 @@ class Financeiro extends PainelController
 				'Multa',
 				'Juros',
 				'Data Cadastro',
-				'Data Alteração'
+				'Data Alteração',
+				'Ativo'
 			];
 			$sheet->fromArray([$cabecalho], NULL, 'A1');
 

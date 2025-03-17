@@ -39,6 +39,9 @@ class ClientesModel extends Model
 		ALTER TABLE `tbl_clientes`
 			ADD COLUMN `clie_dte_ini_contrato` DATETIME NULL DEFAULT NULL AFTER `clie_observacoes`,
 			ADD COLUMN `clie_dte_end_contrato` DATETIME NULL DEFAULT NULL AFTER `clie_dte_ini_contrato`;
+
+			ALTER TABLE `tbl_clientes`
+			ADD COLUMN `clie_raiz_id` INT NULL DEFAULT NULL AFTER `clie_id`;
 	*/
 
 	protected $db = null;
@@ -68,6 +71,7 @@ class ClientesModel extends Model
 		'clie_dte_cadastro',
 		'clie_dte_alteracao',
 		'clie_ativo',
+		'clie_raiz_id',
 	];
 
     protected function initialize()

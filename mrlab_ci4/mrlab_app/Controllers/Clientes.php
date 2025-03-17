@@ -7,6 +7,7 @@ use App\Controllers\PainelController;
 class Clientes extends PainelController
 {
 	protected $clieMD = null;
+	protected $clieRaizMD = null;
 	protected $arqMD = null;
 	protected $cfg = null;
 	protected $cfgStatus = null;
@@ -14,6 +15,7 @@ class Clientes extends PainelController
 	public function __construct()
 	{
 		$this->clieMD = new \App\Models\ClientesModel();
+		$this->clieRaizMD = new \App\Models\ClientesRaizModel();
 		$this->arqMD = new \App\Models\ClientesArquivosModel();
 
 		$this->cfg = new \Config\AppSettings();
@@ -65,6 +67,42 @@ class Clientes extends PainelController
 		return view($this->directory . '/clientes', $this->data);
 	}
 
+	public function filtrarApi()
+	{
+		$token = $this->request->getHeaderLine('X-Authorization');
+		if (empty($token)) {
+			return $this->response->setJSON(['message' => 'Token não fornecido.'], 401);
+		}
+
+		// Verifica se o token pertence a um cliente raiz
+		$clienteRaiz = $this->clieRaizMD->where('clie_raiz_hashkey', $token)->first();
+
+		if (!$clienteRaiz) {
+			return $this->response->setJSON(['message' => 'Token inválido.'], 401);
+		}
+		$clienteRaizId = $clienteRaiz ? $clienteRaiz->clie_raiz_id : null;
+
+
+		$query = $this->clieMD->from('tbl_clientes As CLIE', true)
+			->select('CLIE.clie_id, CLIE.clie_nome_razao, CLIE.clie_nome_fantasia, CLIE.clie_cnpj, CLIE.clie_cep , CLIE.clie_endereco, CLIE.clie_end_numero, CLIE.clie_end_compl, CLIE.clie_bairro, CLIE.clie_cidade, CLIE.clie_estado, CLIE.clie_observacoes, CLIE.clie_dte_ini_contrato, CLIE.clie_dte_end_contrato, CLIE.clie_ativo')
+			->orderBy('CLIE.clie_id', 'DESC')
+			->where('CLIE.clie_raiz_id', $clienteRaizId);
+
+		
+
+		$result = $query->get();
+
+		if ($result && $result->resultID->num_rows >= 1) {
+			$clientes = $result->getResultArray();
+
+		
+
+			return $this->response->setJSON($clientes);
+		} else {
+			return $this->response->setJSON(['message' => 'Nenhum registro encontrado.']);
+		}
+	}
+
 
 	public function form($clie_id = 0)
 	{
@@ -99,6 +137,7 @@ class Clientes extends PainelController
 				$clie_dte_ini_contrato = $this->request->getPost('clie_dte_ini_contrato');
 				$clie_dte_end_contrato = $this->request->getPost('clie_dte_end_contrato');
 				$clie_ativo = (int)$this->request->getPost('clie_ativo');
+				$clie_raiz_id = (int)$this->request->getPost('clie_raiz_id');
 
 				$data_db = [
 					'clie_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
@@ -121,6 +160,7 @@ class Clientes extends PainelController
 					'clie_dte_cadastro' => date("Y-m-d H:i:s"),
 					'clie_dte_alteracao' => date("Y-m-d H:i:s"),
 					'clie_ativo' => (int)$clie_ativo,
+					'clie_raiz_id' => (int)$clie_raiz_id,
 				];
 
 				$queryEdit = $this->clieMD->where('clie_id', $clie_id)->get();
@@ -168,6 +208,11 @@ class Clientes extends PainelController
 			if ($query_arquivos && $query_arquivos->resultID->num_rows >= 1) {
 				$this->data['rs_list_arquivos'] = $query_arquivos;
 			}
+		}
+
+		$query_clientes_raiz = $this->clieRaizMD->where('clie_raiz_ativo', '1')->get();
+		if ($query_clientes_raiz && $query_clientes_raiz->resultID->num_rows >= 1) {
+			$this->data['rs_clientes_raiz'] = $query_clientes_raiz;
 		}
 
 		return view($this->directory . '/' . $template, $this->data);

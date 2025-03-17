@@ -67,10 +67,11 @@ $pend_id = (isset($rs_dados->pend_id) ? $rs_dados->pend_id : "");
 														</select>
 													</div>
 												</div>
-												<div class="col-12">
+												<div class="col-12 col-md-3">
 													<?php
 													// Formate a data do valor inicial usando DateTime.
-													$pend_dte_registro = $rs_dados->pend_dte_registro ? (new DateTime($rs_dados->pend_dte_registro))->format('d/m/Y') : '';
+													$pend_dte_registro = (isset($rs_dados->pend_dte_registro) ? $rs_dados->pend_dte_registro : ''); 
+													$pend_dte_registro = !empty($pend_dte_registro) ? (new DateTime($pend_dte_registro))->format('d/m/Y') : '';
 													?>
 													<div class="form-group">
 														<label class="form-label" for="pend_dte_registro">Abertura do chamado</label>
@@ -82,10 +83,11 @@ $pend_id = (isset($rs_dados->pend_id) ? $rs_dados->pend_id : "");
 													</div>
 
 												</div>
-												<div class="col-12">
+												<div class="col-12 col-md-3">
 													<?php
 													// Formate a data do valor inicial usando DateTime.
-													$pend_dte_instalacao = $rs_dados->pend_dte_instalacao ? (new DateTime($rs_dados->pend_dte_instalacao))->format('d/m/Y') : '';
+													$pend_dte_instalacao = (isset($rs_dados->pend_dte_instalacao) ? $rs_dados->pend_dte_instalacao : ''); 
+													$pend_dte_instalacao = !empty($pend_dte_instalacao) ? (new DateTime($pend_dte_instalacao))->format('d/m/Y') : '';
 													?>
 													<div class="form-group">
 														<label class="form-label" for="pend_dte_instalacao">Executado em</label>
@@ -97,154 +99,117 @@ $pend_id = (isset($rs_dados->pend_id) ? $rs_dados->pend_id : "");
 													</div>
 
 												</div>
+												<div class="col-6">
+													<div class="form-group">
+														<label class="form-label" for="pend_equipe">Equipe</label>
+														<input name="pend_equipe" id="pend_equipe" class="form-control" value="<?php echo ((isset($rs_dados->pend_equipe) ? $rs_dados->pend_equipe : "")); ?>" />
+													</div>
+												</div>												
 											</div>
 
 											<div class="row ">
 												<div class="col-12">
 													<div class="form-group">
-														<label class="form-label" for="pend_equipe">Equipe</label>
-														<textarea name="pend_equipe" id="pend_equipe" class="form-control" rows="1"><?php echo ((isset($rs_dados->pend_equipe) ? $rs_dados->pend_equipe : "")); ?></textarea>
+														<label class="form-label" for="pend_coment_interno">Comentário Interno</label>
+														<textarea name="pend_coment_interno" id="pend_coment_interno" class="form-control" rows="4"><?php echo((isset($rs_dados->pend_coment_interno) ? $rs_dados->pend_coment_interno : ""));?></textarea>
 													</div>
 												</div>
-											</div>
+											</div>											
 
 											<div class="row mt-2 mb-3">
-												<div class="col-12 col-md-12">
-													<div id="BOX-CONTENT-ITEM-TAG">
-														<?php
-														if (isset($rs_tags)) {
-															$countItem = 0;
+												<div class="col-12 col-md-12 mt-3">
+													<div id="BOX-CONTENT-DESC-SERVICOS">
+														<div class="card">
+															<div class="card-header">
+																<h3>Descrição dos Serviços</h3>
+															</div>
+															<div class="card-body">
+															
+																<table class="table table-bordered table-striped">
+																	<thead>
+																		<tr>
+																			<th style="width: 20%">Eqto</th>
+																			<th>Descrição</th>
+																			<th style="width: 175px;">Tipo</th>
+																			<th style="width: 175px;">Status</th>
+																			<th style="width: 100px;">Remover</th>
+																		</tr>
+																	</thead>
+																	<tbody id="table-content-desc-servicos">
+																		<?php
+																		if (isset($rs_tags)) {
+																			$countItem = 0;
+																			foreach ($rs_tags->getResult() as $row) {
+																				$countItem++;
+																				$pendtag_id = (int)($row->pendtag_id);
+																				$pendtag_hashkey = ($row->pendtag_hashkey);
+																				$pendtag_tag = ($row->pendtag_tag);
+																				$pendtag_descricao = ($row->pendtag_descricao);
+																				$pendtag_tipo_serv = ($row->pendtag_tipo_serv);
+																				$pendtag_status = ($row->pendtag_status);
+																		?>
+																		<tr class="trRow">
+																			<td>
+																				<input type="text" name="desc_servicos_eqto[]" id="desc_servicos_eqto_<?php echo ($pendtag_id); ?>" class="form-control" value="<?php echo ($pendtag_tag); ?>" />
+																			</td>
+																			<td>
+																				<input type="text" name="desc_servicos_coment[]" id="desc_servicos_coment_<?php echo ($pendtag_id); ?>" class="form-control" value="<?php echo ($pendtag_descricao); ?>" />
+																			</td>
+																			<td>
+																				<select class="form-select" name="desc_servicos_tipo[]" id="desc_servicos_tipo_<?php echo ($countItem); ?>">
+																					<option value="" translate="no">- selecione -</option>
+																					<?php
+																					if (isset($rs_tipo_serv)) {
+																						foreach ($rs_tipo_serv->getResult() as $row) {
+																							$categ_id = ($row->categ_id);
+																							$categ_titulo = ($row->categ_titulo);
+																							$selected = (($categ_id == $pendtag_tipo_serv) ? "selected" : "");
+																					?>
+																							<option value="<?php echo ($categ_id); ?>" <?php echo ($selected); ?> translate="no"><?php echo ($categ_titulo); ?></option>
+																					<?php
+																						}
+																					}
+																					?>
+																				</select>
+																			</td>
+																			<td>
+																				<select class="form-select" name="desc_servicos_status[]" id="desc_servicos_status_<?php echo ($countItem); ?>">
+																					<option value="" translate="no">- selecione -</option>
+																					<?php
+																					if (isset($rs_status)) {
+																						foreach ($rs_status->getResult() as $row) {
+																							$categ_id = ($row->categ_id);
+																							$categ_titulo = ($row->categ_titulo);
+																							$selected = (($categ_id == $pendtag_status) ? "selected" : "");
+																					?>
+																							<option value="<?php echo ($categ_id); ?>" <?php echo ($selected); ?> translate="no"><?php echo ($categ_titulo); ?></option>
+																					<?php
+																						}
+																					}
+																					?>
+																				</select>
+																			</td>		
+																			<td>
+																				<a href="javascript:;" class="btn btn-danger btn-sm cmdDELETARIDTAG" data-hashkey="<?php echo ($pendtag_hashkey); ?>"><i class="far fa-trash-alt"></i> </a>
+																				<input type="hidden" name="desc_servicos_id[]" value="<?php echo ($pendtag_id); ?>" />
+																			</td>
+																		</tr>
+																		<?php
+																			}
+																		}
+																		?>
+																	</tbody>
+																</table>
 
-															//print '<pre>';
-															//print_r( $rs_tags->getResult() );
-															//print '</pre>';
-															foreach ($rs_tags->getResult() as $row) {
-																$countItem++;
-																$pendtag_id = (int)($row->pendtag_id);
-																$pendtag_hashkey = ($row->pendtag_hashkey);
-
-																$pendtag_dte_registro = fct_formatdate($row->pendtag_dte_registro, 'd/m/Y');
-																$pendtag_dte_instalacao = fct_formatdate($row->pendtag_dte_instalacao, 'd/m/Y');
-																$pendtag_tipo_serv = ($row->pendtag_tipo_serv);
-																$pendtag_status = ($row->pendtag_status);
-
-																$eqto_id = (int)($row->eqto_id);
-																$eqto_tag = ($row->eqto_tag);
-																$pendtag_equipamento = ($row->eqto_titulo);
-
-																$pendtag_tag = ($row->pendtag_tag);
-																$pendtag_descricao = ($row->pendtag_descricao);
-																$pendtag_anexos = '';
-																$pendtag_observacoes = ($row->pendtag_observacoes);
-																$pendtag_retornar = ($row->pendtag_retornar);
-																$pendtag_materiais = ($row->pendtag_materiais);
-																$pendtag_coment_interno = ($row->pendtag_coment_interno);
-														?>
-																<div class="card cardboxtag mb-3 trRow">
-																	<div class="card-body" style="padding: 15px !important;">
-																		<div class="carBoxRow">
-																			<div class="row">
-																				<div class="col-12 col-md-3">
-																					<div class="form-group">
-																						<label class="form-label" for="pendtag_tag_<?php echo ($countItem); ?>">Equipamento</label>
-																						<input type="text" name="pendtag_tag[]" id="pendtag_tag_<?php echo ($countItem); ?>" class="form-control" value="<?php echo ($pendtag_tag); ?>" />
-																					</div>
-																				</div>
-																				<div class="col-12 col-md-5">
-																					<div class="form-group">
-																						<label class="form-label" for="pendtag_descricao_<?php echo ($countItem); ?>">Descrição</label>
-																						<textarea name="pendtag_descricao[]" id="pendtag_descricao_<?php echo ($countItem); ?>" class="form-control" rows="3"><?php echo ($pendtag_descricao); ?></textarea>
-																					</div>
-																				</div>
-																				<div class="col-12 col-md-2">
-																					<div class="form-group">
-																						<label class="form-label" for="pendtag_tipo_serv_<?php echo ($countItem); ?>">Tipo</label>
-																						<select class="form-select" name="pendtag_tipo_serv[]" id="pendtag_tipo_serv_<?php echo ($countItem); ?>">
-																							<option value="" translate="no">- selecione -</option>
-																							<?php
-																							if (isset($rs_tipo_serv)) {
-																								foreach ($rs_tipo_serv->getResult() as $row) {
-																									$categ_id = ($row->categ_id);
-																									$categ_titulo = ($row->categ_titulo);
-																									$selected = (($categ_id == $pendtag_tipo_serv) ? "selected" : "");
-																							?>
-																									<option value="<?php echo ($categ_id); ?>" <?php echo ($selected); ?> translate="no"><?php echo ($categ_titulo); ?></option>
-																							<?php
-																								}
-																							}
-																							?>
-																						</select>
-																					</div>
-																				</div>
-																				<div class="col-12 col-md-2">
-																					<div class="form-group">
-																						<label class="form-label" for="pendtag_status_<?php echo ($countItem); ?>">Status</label>
-																						<select class="form-select" name="pendtag_status[]" id="pendtag_status_<?php echo ($countItem); ?>">
-																							<option value="" translate="no">- selecione -</option>
-																							<?php
-																							if (isset($rs_status)) {
-																								foreach ($rs_status->getResult() as $row) {
-																									$categ_id = ($row->categ_id);
-																									$categ_titulo = ($row->categ_titulo);
-																									$selected = (($categ_id == $pendtag_status) ? "selected" : "");
-																							?>
-																									<option value="<?php echo ($categ_id); ?>" <?php echo ($selected); ?> translate="no"><?php echo ($categ_titulo); ?></option>
-																							<?php
-																								}
-																							}
-																							?>
-																						</select>
-																					</div>
-																				</div>
-																			</div>
-																			<div class="row">
-
-																				<div class="col-12 col-md-4">
-																					<div class="form-group">
-																						<label class="form-label" for="pendtag_retornar_<?php echo ($countItem); ?>">Retornar</label>
-																						<select class="form-select" name="pendtag_retornar[]" id="pendtag_retornar_<?php echo ($countItem); ?>">
-																							<option value="" translate="no">- selecione -</option>
-																							<option value="Sim" <?php echo ($pendtag_retornar === 'Sim' ? "selected" : ""); ?>>Sim</option>
-																							<option value="Não" <?php echo ($pendtag_retornar === 'Não' ? "selected" : ""); ?>>Não</option>
-																						</select>
-																					</div>
-																				</div>
-																				<div class="col-12 col-md-4">
-																					<div class="form-group">
-																						<label class="form-label" for="pendtag_materiais_<?php echo ($countItem); ?>">Pedido de Materiais</label>
-																						<select class="form-select" name="pendtag_materiais[]" id="pendtag_materiais_<?php echo ($countItem); ?>">
-																							<option value="" translate="no">- selecione -</option>
-																							<option value="Sim" <?php echo ($pendtag_materiais === 'Sim' ? "selected" : ""); ?>>Sim</option>
-																							<option value="Não" <?php echo ($pendtag_materiais === 'Não' ? "selected" : ""); ?>>Não</option>
-																						</select>
-																					</div>
-																				</div>
-																				<div class="col-12 col-md-4">
-																					<div class="form-group">
-																						<label class="form-label" for="pendtag_coment_interno_<?php echo ($countItem); ?>">Comentário Interno</label>
-																						<textarea name="pendtag_coment_interno[]" id="pendtag_coment_interno_<?php echo ($countItem); ?>" class="form-control" rows="3"><?php echo ($pendtag_coment_interno); ?></textarea>
-																					</div>
-																				</div>
-
-																			</div>
-
-																			<br>
-																			<div class="row justify-content-start">
-																				<div class="col-12 col-md-4">
-																					<a href="javascript:;" style="padding: 3px 8px;" class="cmdDELETARIDTAG icon-delete tag-delete" data-hashkey="<?php echo ($pendtag_hashkey); ?>"><i class="far fa-trash-alt"></i> Excluir Este Registro</a>
-																					<input type="hidden" name="pendtag_id[]" id="pendtag_id_<?php echo ($countItem); ?>" value="<?php echo ($pendtag_id); ?>" />
-																				</div>
-																			</div>
-																		</div>
-																	</div>
-																</div>
-														<?php
-															}
-														}
-														?>
+															</div>
+															<div class="card-footer">
+																<a href="javascript:;" class="btn btn-sm btn-warning cmdAddDescServicos">Adicionar Descrição de Serviços</a>
+															</div>
+														</div>
 													</div>
-													<a href="javascript:;" class="btn btn-sm btn-warning cmdAddNovaTAG">Adicionar Novo Equipamento </a>
-												</div>
+												</div>												
+
+											
 												<div class="col-12 col-md-12 mt-3">
 													<div id="BOX-CONTENT-MAT-UTILIZADO">
 														<div class="card">
@@ -313,7 +278,6 @@ $pend_id = (isset($rs_dados->pend_id) ? $rs_dados->pend_id : "");
 																<a href="javascript:;" class="btn btn-sm btn-warning cmdAddNovoMatUtilizado">Adicionar Material Utilizado</a>
 															</div>
 														</div>
-
 													</div>
 												</div>
 												<div class="col-12 col-md-12 mt-3">
@@ -671,6 +635,52 @@ $this->endSection('content');
 		</div>
 </script>
 
+<script id="mstcRowItemDescServicos" type="text/x-jquery-tmpl">
+	<tr class="trRow">
+        <td>
+            <input type="text" name="desc_servicos_eqto[]" id="desc_servicos_eqto_{{item}}" class="form-control" />
+        </td>
+        <td>
+            <input type="text" name="desc_servicos_coment[]" id="desc_servicos_coment_{{item}}" class="form-control" />
+        </td>
+        <td>
+			<select class="form-select" name="desc_servicos_tipo[]" id="desc_servicos_tipo_{{item}}">
+				<option value="" translate="no">- selecione -</option>
+				<?php
+				if (isset($rs_tipo_serv)) {
+					foreach ($rs_tipo_serv->getResult() as $row) {
+						$categ_id = ($row->categ_id);
+						$categ_titulo = ($row->categ_titulo);
+				?>
+					<option value="<?php echo ($categ_id); ?>" translate="no"><?php echo ($categ_titulo); ?></option>
+				<?php
+					}
+				}
+				?>
+			</select>			
+        </td>
+        <td>
+			<select class="form-select" name="desc_servicos_status[]" id="desc_servicos_status_{{item}}">
+				<option value="" translate="no">- selecione -</option>
+				<?php
+				if (isset($rs_status)) {
+					foreach ($rs_status->getResult() as $row) {
+						$categ_id = ($row->categ_id);
+						$categ_titulo = ($row->categ_titulo);
+				?>
+					<option value="<?php echo ($categ_id); ?>" translate="no"><?php echo ($categ_titulo); ?></option>
+				<?php
+					}
+				}
+				?>
+			</select>			
+        </td>		
+        <td>
+            <a href="javascript:;" class="btn btn-danger btn-sm cmdREMOVEITEMDESCSERV"><i class="far fa-trash-alt"></i> </a>
+            <input type="hidden" name="desc_servicos_id[]" value="0" />
+        </td>
+    </tr>
+</script>
 
 <script id="mstcRowItemMatUtilizado" type="text/x-jquery-tmpl">
 	<tr class="trRow">
@@ -736,7 +746,7 @@ $this->endSection('content');
 			cache: false
 		});
 
-		$(document).on('click', '.cmdAddNovaTAG', function(e) {
+		$(document).on('click', '.cmdAddNovaTAG_OLD', function(e) {
 			let templateData = {
 				item: 1,
 				trRow: 'trRow'
@@ -757,7 +767,7 @@ $this->endSection('content');
 			//$el.find(".mask-date-place").mask('00/00/0000', {placeholder: "dd/mm/yyyy", clearIfNotMatch: true});
 			//$el.find('.mask-hours').mask('00:00:00', {placeholder: "00:00:00", clearIfNotMatch: true});
 		});
-		$(document).on('click', '.cmdREMOVEITEMTAG', function(e) {
+		$(document).on('click', '.cmdREMOVEITEMTAG_OLD', function(e) {
 			let $this = $(this);
 			let $row = $this.closest(".trRow");
 
@@ -781,6 +791,43 @@ $this->endSection('content');
 					fct_count_item_tags();
 				}
 			});
+		});
+		//fct_count_item_tags_OLD();
+	});
+	var fct_count_item_tags = function(p, callback) {
+		let $box = $('#BOX-CONTENT-ITEM-TAG');
+		let $qtdItem = $box.find('.trRow');
+		if ($qtdItem.length == 0) {
+			$(".cmdAddNovaTAG").trigger("click");
+		}
+	}
+</script>
+
+
+<!-- Script Materiais Utilizados -->
+<script>
+	var fct_count_item_desc_serv = function(p, callback) {
+		let $box = $('#BOX-CONTENT-MAT-UTILIZADO');
+		let $qtdItem = $box.find('.trRow');
+		if ($qtdItem.length == 0) {
+			$(".cmdAddNovoMatUtilizado").trigger("click");
+		}
+	}
+	$(document).ready(function() {
+		$.ajaxSetup({
+			cache: false
+		});
+
+		//Add Descrição de Serviços	
+		$(document).on('click', '.cmdAddDescServicos', function() {
+			let templateData = {
+				item: 1
+			};
+			let template = $("#mstcRowItemDescServicos").html();
+			$('#table-content-desc-servicos').append(Mustache.render(template, templateData));
+		});
+		$(document).on('click', '.cmdREMOVEITEMDESCSERV', function() {
+			$(this).closest('tr').remove();
 		});
 		$(document).on('click', '.cmdDELETARIDTAG', function(e) {
 			let $this = $(this);
@@ -827,7 +874,7 @@ $this->endSection('content');
 							console.log(response);
 
 							$row.remove();
-							fct_count_item_tags();
+							fct_count_item_desc_serv();
 						},
 						error: function(jqXHR, textStatus, errorThrown) {}
 					});
@@ -835,23 +882,8 @@ $this->endSection('content');
 				}
 			});
 		});
+		fct_count_item_desc_serv();
 
-		fct_count_item_tags();
-	});
-	var fct_count_item_tags = function(p, callback) {
-		let $box = $('#BOX-CONTENT-ITEM-TAG');
-		let $qtdItem = $box.find('.trRow');
-		if ($qtdItem.length == 0) {
-			$(".cmdAddNovaTAG").trigger("click");
-		}
-	}
-</script>
-<!-- Script Materiais Utilizados -->
-<script>
-	$(document).ready(function() {
-		$.ajaxSetup({
-			cache: false
-		});
 
 		$(document).on('click', '.cmdAddNovoMatUtilizado', function() {
 			let templateData = {

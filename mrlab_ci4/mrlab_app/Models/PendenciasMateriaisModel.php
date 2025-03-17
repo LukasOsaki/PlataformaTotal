@@ -29,7 +29,7 @@ class PendenciasMateriaisModel extends Model
 		)
 		COLLATE='utf8mb4_general_ci'
 		ENGINE=MyISAM
-		AUTO_INCREMENT=3
+		AUTO_INCREMENT=1
 		;
 	*/
 

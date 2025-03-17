@@ -25,10 +25,12 @@ class PendenciasTagsModel extends Model
 		ENGINE=MyISAM
 		AUTO_INCREMENT=3
 		;
+		
+		
 
 		ALTER TABLE `tbl_pendencias_tags`
-		ADD COLUMN `pendtag_retornar` VARCHAR(250) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-		ADD COLUMN `pendtag_materiais` VARCHAR(250) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci';
+			ADD COLUMN `pendtag_retornar` VARCHAR(250) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+			ADD COLUMN `pendtag_materiais` VARCHAR(250) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci';
 
 	*/
 

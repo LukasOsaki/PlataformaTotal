@@ -65,7 +65,11 @@
                     <?php endif; ?>
 
                     <?php if ($sessionAdmin_user_nivel == "cliente"): ?>
-                        <li class="nav-item"><a class="nav-link" href="<?= site_url('clientes') ?>">Clientes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('clientes') ?>">Perfil</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('servicos') ?>">Serviços</a></li>
+                    <?php endif; ?>
+                    <?php if ($sessionAdmin_user_nivel == "cliente_raiz"): ?>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('clientesRaiz') ?>">Perfil</a></li>
                         <li class="nav-item"><a class="nav-link" href="<?= site_url('servicos') ?>">Serviços</a></li>
                     <?php endif; ?>
                 </ul>
@@ -85,7 +89,7 @@
 
     <!-- Main Content -->
     <main >
-        <div class="container">
+        <div class="container-fluid">
             <?php $this->renderSection('content'); ?>
         </div>
     </main>

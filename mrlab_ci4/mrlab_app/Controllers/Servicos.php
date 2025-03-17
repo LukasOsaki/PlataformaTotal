@@ -4,21 +4,33 @@ namespace App\Controllers;
 
 use App\Controllers\PainelController;
 
+require dirname(__DIR__, 2) . '/vendor/autoload.php';
+
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Servicos extends PainelController
 {
 	protected $pendMD = null;
+	protected $pendMD2 = null;
+	protected $pendMD3 = null;
 	protected $pendTagMD = null;
 	protected $pendMatMD = null;
 	protected $clieMD = null;
+	protected $clieRaizMD = null;
 	protected $eqtoMD = null;
 	protected $categMD = null;
 
 	public function __construct()
 	{
 		$this->pendMD = new \App\Models\PendenciasModel();
+		$this->pendMD2 = new \App\Models\PendenciasModel();
+		$this->pendMD3 = new \App\Models\PendenciasModel();
 		$this->pendTagMD = new \App\Models\PendenciasTagsModel();
 		$this->pendMatMD = new \App\Models\PendenciasMateriaisModel();
 		$this->clieMD = new \App\Models\ClientesModel();
+		$this->clieRaizMD = new \App\Models\ClientesRaizModel();
 		$this->eqtoMD = new \App\Models\EquipamentosModel();
 		$this->categMD = new \App\Models\CategoriasModel();
 
@@ -35,19 +47,19 @@ class Servicos extends PainelController
 	}
 
 
+
 	public function filtrar()
 	{
+		$cliente = $this->request->getGet('cliente'); // Captura o status da URL (GET)
+		$equipamento = $this->request->getGet('equipamento'); // Captura o status da URL (GET)
+		$inicio = $this->request->getGet('inicio'); // Captura o inicio da URL (GET)
+		$fim = $this->request->getGet('fim'); // Captura o fim da URL (GET)
+
 		$template = 'servicos';
 		$sessionAdmin_user_nivel = session()->get('admin_nivel');
-		if ($sessionAdmin_user_nivel == 'cliente') {
+		if ($sessionAdmin_user_nivel == 'cliente' || $sessionAdmin_user_nivel == 'cliente_raiz') {
 			$template = 'servicos-cliente';
 		}
-
-
-
-
-		$filtro_pdf = '';
-		// filtrar/user:marcio/cliente:123/dini:/dteend:/status:pago
 
 		$uri = service('uri'); // Obter a instância do objeto URI
 		$segments = $uri->getSegments();
@@ -55,30 +67,50 @@ class Servicos extends PainelController
 
 		$filteredSegments = array_slice($segments, $index + 1); // Retornar os elementos a partir de $index + 1 até o final
 
-		$this->pendMD->from('tbl_pendencias As PEND', true)
-			->select('PEND.*')
-			->select('TAG.pendtag_tag, TAG.pendtag_tipo_serv, TAG.pendtag_status, TAG.pendtag_dte_registro, TAG.pendtag_dte_instalacao, TAG.pendtag_descricao')
-			->select('MAT.pend_mat_material, MAT.pend_mat_tipo, MAT.pend_mat_observacoes, MAT.pend_mat_qtd, MAT.pend_mat_dte_compra, MAT.pend_mat_dte_disponivel, MAT.pend_mat_dte_utilizado')
-			->select('CLIE.clie_nome_razao, CLIE.clie_nome_fantasia')
-			->select('CATEG.categ_titulo, CATEG.categ_color')
+		$query = $this->pendMD->from('tbl_pendencias As PEND', true)
+			->select('PEND.*, CLIE.clie_nome_razao, CLIE.clie_nome_fantasia, CATEG.categ_titulo, CATEG.categ_color')
+			->select("GROUP_CONCAT(DISTINCT TAG.pendtag_tag ORDER BY TAG.pendtag_tag SEPARATOR '; ') as pendtag_tags")
+			->select("GROUP_CONCAT(DISTINCT TAG.pendtag_descricao ORDER BY TAG.pendtag_descricao SEPARATOR '; ') as pendtag_descricao")
 			->join('tbl_pendencias_tags TAG', 'TAG.pend_id = PEND.pend_id', 'LEFT')
-			->join('tbl_pendencias_materiais MAT', 'MAT.pend_id = PEND.pend_id', 'LEFT')
 			->join('tbl_categorias CATEG', 'CATEG.categ_id = TAG.pendtag_status', 'LEFT')
 			->join('tbl_clientes CLIE', 'CLIE.clie_id = PEND.clie_id', 'LEFT')
+			->groupBy('PEND.pend_id')
+			->orderBy('PEND.pend_id', 'DESC')
+			// ->get()
 		;
 
 		if ($sessionAdmin_user_nivel == 'cliente') {
 			$clie_id = (int)session()->get('admin_id');
 			$this->pendMD->where('PEND.clie_id', $clie_id);
 		}
+		if ($sessionAdmin_user_nivel == 'cliente_raiz') {
+			$clie_id = (int)session()->get('admin_id');
+			$this->pendMD->where('CLIE.clie_raiz_id', $clie_id);
+		}
 
-		$query = $this->pendMD->orderBy('PEND.pend_id', 'ASC')
+		// Aplica o filtro de status se ele for informado
+		if (!empty($cliente)) {
+			$query->where('PEND.clie_id', $cliente);
+		}
+
+		if (!empty($periodicidade)) {
+			$query->where('PEND.finc_periodicidade', $periodicidade);
+		}
+		if (!empty($inicio)) {
+			$query->where('DATE(PEND.pend_dte_instalacao) >=', date('Y-m-d', strtotime($inicio)));
+		}
+		if (!empty($fim)) {
+			$query->where('DATE(PEND.pend_dte_instalacao) <=', date('Y-m-d', strtotime($fim)));
+		}
+
+		if (!empty($equipamento)) {
+			$query->like('TAG.pendtag_tag', $equipamento);
+		}
+
+
+		$query = $this->pendMD->orderBy('PEND.pend_id', 'DESC')
 			// ->limit(1000)
 			->get();
-
-		//$this->pendMD->orderBy('pend_id', 'DESC')
-		//	->limit(1000);
-		//$query = $this->pendMD->get();
 
 		$this->data['lastQuery'] = $this->pendMD->getLastQuery();
 		//->getCompiledSelect();
@@ -87,9 +119,150 @@ class Servicos extends PainelController
 			$this->data['rs_list'] = $query;
 		}
 
+		$query_clientes = $this->clieMD->where('clie_ativo', '1')->get();
+		if ($query_clientes && $query_clientes->resultID->num_rows >= 1) {
+			$this->data['rs_clientes'] = $query_clientes;
+		}
+
+		// Inclui os filtros para manter na view
+		$this->data['selected_cliente'] = $cliente;
+		$this->data['selected_inicio'] = $inicio;
+		$this->data['selected_fim'] = $fim;
+		$this->data['selected_equipamento'] = $equipamento;
+
 		return view($this->directory . '/' . $template, $this->data);
 	}
 
+	public function filtrarApi()
+	{
+		$token = $this->request->getHeaderLine('X-Authorization');
+		if (empty($token)) {
+			return $this->response->setJSON(['message' => 'Token não fornecido.'], 401);
+		}
+
+		// Verifica se o token pertence a um cliente ou cliente raiz
+		$cliente = $this->clieMD->where('clie_hashkey', $token)->first();
+		$clienteRaiz = $this->clieRaizMD->where('clie_raiz_hashkey', $token)->first();
+
+		if (!$cliente && !$clienteRaiz) {
+			return $this->response->setJSON(['message' => 'Token inválido.'], 401);
+		}
+
+		$clienteId = $cliente ? $cliente->clie_id : null;
+		$clienteRaizId = $clienteRaiz ? $clienteRaiz->clie_raiz_id : null;
+
+		$cliente = $this->request->getGet('cliente_id'); // Captura o status da URL (GET)
+		$equipamento = $this->request->getGet('equipamento'); // Captura o status da URL (GET)
+		$inicio = $this->request->getGet('inicio'); // Captura o inicio da URL (GET)
+		$fim = $this->request->getGet('fim'); // Captura o fim da URL (GET)
+
+		$query = $this->pendMD->from('tbl_pendencias As PEND', true)
+			->select('PEND.pend_id, PEND.pend_dte_registro, PEND.pend_dte_instalacao, PEND.pend_equipe, PEND.pend_coment_interno, PEND.clie_id, CLIE.clie_nome_razao, CLIE.clie_nome_fantasia, CATEG.categ_titulo, CATEG.categ_color')
+			->select("GROUP_CONCAT(DISTINCT TAG.pendtag_tag ORDER BY TAG.pendtag_tag SEPARATOR '; ') as pendtag_tags")
+			->select("GROUP_CONCAT(DISTINCT TAG.pendtag_descricao ORDER BY TAG.pendtag_descricao SEPARATOR '; ') as pendtag_descricao")
+			->join('tbl_pendencias_tags TAG', 'TAG.pend_id = PEND.pend_id', 'LEFT')
+			->join('tbl_categorias CATEG', 'CATEG.categ_id = TAG.pendtag_status', 'LEFT')
+			->join('tbl_clientes CLIE', 'CLIE.clie_id = PEND.clie_id', 'LEFT')
+			->groupBy('PEND.pend_id')
+			->orderBy('PEND.pend_id', 'DESC');
+
+		if ($clienteId) {
+			$query->where('PEND.clie_id', $clienteId);
+		} elseif ($clienteRaizId) {
+			$query->where('CLIE.clie_raiz_id', $clienteRaizId);
+		}
+
+		if (!empty($inicio)) {
+			$query->where('DATE(PEND.pend_dte_instalacao) >=', date('Y-m-d', strtotime($inicio)));
+		}
+		if (!empty($fim)) {
+			$query->where('DATE(PEND.pend_dte_instalacao) <=', date('Y-m-d', strtotime($fim)));
+		}
+		if (!empty($equipamento)) {
+			$query->like('TAG.pendtag_tag', $equipamento);
+		}
+		if (!empty($cliente)) {
+			$query->like('PEND.clie_id', $cliente);
+		}
+
+		$result = $query->get();
+
+		if ($result && $result->resultID->num_rows >= 1) {
+			$pendencias = $result->getResultArray();
+
+			foreach ($pendencias as &$pendencia) {
+				$pend_id = $pendencia['pend_id'];
+
+				//Retorno das tags
+				$this->pendTagMD->from('tbl_pendencias_tags As TAG', true)
+					->select('TAG.pendtag_tag AS  eqto, TAG.pendtag_descricao AS descricao, TAG.pendtag_tipo_serv AS tipo_serv, TAG.pendtag_status AS status')
+					->select('EQTO.eqto_tag, EQTO.eqto_titulo')
+					->join('tbl_equipamentos EQTO', 'EQTO.eqto_id = TAG.eqto_id', 'LEFT');
+				$this->pendTagMD->where('TAG.pend_id', $pend_id);
+				$this->pendTagMD->orderBy('TAG.pend_id', 'ASC');
+				$query_tags = $this->pendTagMD->get();
+				//$query_tags = $this->pendTagMD->where('pend_id', $pend_id)->get();
+				if ($query_tags && $query_tags->resultID->num_rows >= 1) {
+					$pendencia['tags']  = $query_tags->getResultArray();
+				}
+
+				//Retorno dos materiais utilizados
+				$query_mats_utilizados = $this->pendMatMD
+					->select('pend_mat_qtd AS qtd, pend_mat_eqto AS eqto, pend_mat_material AS tipo, pend_mat_observacoes AS comentario')
+					->where('pend_id', $pend_id)
+					->where('pend_mat_tipo', 'Utilizado')
+					->orderBy('pend_id', 'ASC')
+					->get();
+				if ($query_mats_utilizados && $query_mats_utilizados->resultID->num_rows >= 1) {
+					$pendencia['materiais_utilizados'] = $query_mats_utilizados->getResultArray();
+				}
+
+				//Retorno dos materiais solicitados
+				$query_mats_solicitados = $this->pendMatMD
+					->select('pend_mat_qtd AS qtd, pend_mat_eqto AS eqto, pend_mat_material AS tipo, pend_mat_observacoes AS comentario')
+					->select('pend_mat_dte_compra AS dte_compra, pend_mat_dte_disponivel AS dte_disponivel, pend_mat_dte_utilizado AS dte_utilizado')
+					->where('pend_id', $pend_id)
+					->where('pend_mat_tipo', 'Solicitado')
+					->orderBy('pend_id', 'ASC')
+					->get();
+				if ($query_mats_solicitados && $query_mats_solicitados->resultID->num_rows >= 1) {
+					$pendencia['materiais_solicitados'] = $query_mats_solicitados->getResultArray();
+				}
+
+
+
+				// Obter tags
+				// $tagsQuery = $this->pendTagMD
+				// 	->select('TAG.*')
+				// 	->select('EQTO.eqto_tag, EQTO.eqto_titulo')
+				// 	->join('tbl_equipamentos EQTO', 'EQTO.eqto_id = TAG.eqto_id', 'LEFT')
+				// 	->where('TAG.pend_id', $pend_id)
+				// 	->orderBy('TAG.pend_id', 'ASC')
+				// 	->get();
+				// $pendencia['tags'] = $tagsQuery->getResultArray();
+
+				// Obter materiais utilizados
+				// $materiaisUtilizadosQuery = $this->pendMatMD
+				// 	->where('pend_id', $pend_id)
+				// 	->where('pend_mat_tipo', 'Utilizado')
+				// 	->orderBy('pend_id', 'ASC')
+				// 	->get();
+				// $pendencia['materiais_utilizados'] = $materiaisUtilizadosQuery->getResultArray();
+
+				// Obter materiais solicitados
+				// $materiaisSolicitadosQuery = $this->pendMatMD
+				// 	->where('pend_id', $pend_id)
+				// 	->where('pend_mat_tipo', 'Solicitado')
+				// 	->orderBy('pend_id', 'ASC')
+				// 	->get();
+				// $pendencia['materiais_solicitados'] = $materiaisSolicitadosQuery->getResultArray();
+			}
+
+			return $this->response->setJSON($pendencias);
+		} else {
+			return $this->response->setJSON(['message' => 'Nenhum registro encontrado.']);
+		}
+	}
 
 	public function form($pend_id = 0)
 	{
@@ -155,13 +328,12 @@ class Servicos extends PainelController
 
 
 				// ------------------------------------------------------------
-				// Valores Tag
+				// Valores Tag --- FORMATO ANTIGO
 				// ------------------------------------------------------------
+				/*
 				$arr_pendtag_tag = $this->request->getPost('pendtag_tag');
-
 				$arr_pendtag_tipo_serv = $this->request->getPost('pendtag_tipo_serv');
 				$arr_pendtag_status = $this->request->getPost('pendtag_status');
-
 				$arr_pendtag_descricao = $this->request->getPost('pendtag_descricao');
 				$arr_pendtag_retornar = $this->request->getPost('pendtag_retornar');
 				$arr_pendtag_materiais = $this->request->getPost('pendtag_materiais');
@@ -213,6 +385,68 @@ class Servicos extends PainelController
 							$qryExecuteTAGS = $this->pendTagMD->update($pendtag_id, $data_tag_db);
 						}
 					}
+				*/
+				/*
+					desc_servicos_eqto
+					desc_servicos_coment
+					desc_servicos_tipo
+					desc_servicos_status
+					desc_servicos_id
+				*/
+				// ------------------------------------------------------------
+				// Desrição de Serviços
+				// ------------------------------------------------------------
+				$arr_pendtag_tag = $this->request->getPost('desc_servicos_eqto');
+				$arr_pendtag_descricao = $this->request->getPost('desc_servicos_coment');
+				$arr_pendtag_tipo_serv = $this->request->getPost('desc_servicos_tipo');
+				$arr_pendtag_status = $this->request->getPost('desc_servicos_status');
+				$arr_pendtag_id = $this->request->getPost('desc_servicos_id');
+				foreach ($arr_pendtag_id as $key => $val) {
+					$pendtag_id = (int)$val;
+					$pendtag_tag = $arr_pendtag_tag[$key];
+					$pendtag_descricao = $arr_pendtag_descricao[$key];
+					$pendtag_tipo_serv = $arr_pendtag_tipo_serv[$key];
+					$pendtag_status = $arr_pendtag_status[$key];
+
+					$acaoTAGS = 'INSERT';
+					$query_tag = $this->pendTagMD
+						->where('pendtag_id', $pendtag_id)
+						->where('pend_id', $pend_id)
+						->orderBy('pendtag_id', 'DESC')
+						->limit(1)
+						->get();
+					if ($query_tag && $query_tag->resultID->num_rows >= 1) {
+						$acaoTAGS = 'UPDATE';
+					}
+					$data_tag_db = [
+						'pend_id' => $pend_id,
+						'eqto_id' => 0,
+						'pendtag_hashkey' => md5(date("Y-m-d H:i:s") . "-" . random_string('alnum', 16)),
+						'pendtag_tipo_serv' => (int)$pendtag_tipo_serv,
+						'pendtag_status' => (int)$pendtag_status,
+						'pendtag_tag' => $pendtag_tag,
+						'pendtag_descricao' => $pendtag_descricao,
+						//'pendtag_retornar' => $pendtag_retornar,
+						//'pendtag_materiais' => $pendtag_materiais,
+						//'pendtag_coment_interno' => $pendtag_coment_interno,
+						'pendtag_dte_cadastro' => date("Y-m-d H:i:s"),
+						'pendtag_dte_alteracao' => date("Y-m-d H:i:s"),
+						'pendtag_ativo' => 1
+					];
+					if ($acaoTAGS == "INSERT") {
+						$pendtag_id = $this->pendTagMD->insert($data_tag_db);
+					}
+					if ($acaoTAGS == "UPDATE") {
+						unset($data_tag_db['pendtag_hashkey']);
+						unset($data_tag_db['pendtag_dte_cadastro']);
+						$this->pendTagMD->set($data_tag_db);
+						$this->pendTagMD->where('pendtag_id', $pendtag_id);
+						$this->pendTagMD->where('pend_id', $pend_id);
+						$this->pendTagMD->update();
+					}
+				}
+
+
 				// ------------------------------------------------------------
 				// Valores Mat 
 				// ------------------------------------------------------------
@@ -658,40 +892,9 @@ class Servicos extends PainelController
 				exit();
 				break;
 
-			case "ENVIAR-EMAIL-CADASTRO":
+
 
 				$cad_hashkey = $this->request->getPost('cad_hashkey');
-				$query = $this->cadMD->where('cad_hashkey', $cad_hashkey)->get();
-
-				if ($query && $query->resultID->num_rows >= 1) {
-					$rs = $query->getRow();
-					$cad_id = (int)$rs->cad_id;
-					$cad_email = $rs->cad_email;
-
-					/*
-				* -------------------------------------------------------------
-				* enviando email após confirmação de pagamento
-				* -------------------------------------------------------------
-				**/
-					self::enviarEmailCadastro($cad_id);
-
-					$error_num = "0";
-					$error_msg = "E-mail enviado com sucesso!";
-					$redirect = "";
-
-					$arr_return = array(
-						"error_num" => $error_num,
-						"error_msg" => $error_msg,
-					);
-				}
-
-				echo (json_encode($arr_return));
-				exit();
-				break;
-			case "GERAR-NOVO-PDF":
-
-				$cad_hashkey = $this->request->getPost('cad_hashkey');
-				$query = $this->cadMD->where('cad_hashkey', $cad_hashkey)->get();
 
 				if ($query && $query->resultID->num_rows >= 1) {
 					$rs = $query->getRow();
@@ -710,11 +913,6 @@ class Servicos extends PainelController
 
 						$rand_id = str_pad($cad_id, 4, '0', STR_PAD_LEFT);
 						$cad_qrcode = strtoupper('LCSU' . $rand_id . $num_random);
-
-						$this->cadMD->set('cad_qrsalt', $num_random);
-						$this->cadMD->set('cad_qrcode', $cad_qrcode);
-						$this->cadMD->where('cad_hashkey', $cad_hashkey);
-						$this->cadMD->update();
 					}
 
 					/*
@@ -722,7 +920,6 @@ class Servicos extends PainelController
 				* Gerar o QRCode e PDF
 				* -------------------------------------------------------------
 				**/
-					$libQRCode = new QRCodeLib();
 					$libQRCode->GerarQRCode($cad_qrcode);
 					$libQRCode->GerarPDF($cad_qrcode, $cad_nome_completo);
 
@@ -738,7 +935,6 @@ class Servicos extends PainelController
 					$fields_log['cad_qrcode'] = $cad_qrcode;
 					$fields_log['cad_cpf'] = $cad_cpf;
 					$fields_log['cad_email'] = $cad_email;
-					$this->logMD->save_log($fields_log);
 
 					$error_num = "0";
 					$error_msg = "Ingresso gerado com sucesso!";
@@ -753,6 +949,169 @@ class Servicos extends PainelController
 				echo (json_encode($arr_return));
 				exit();
 				break;
+		}
+	}
+
+	public function exportar()
+	{
+		if (is_cli()) {
+			exit("Este método não pode ser acessado via linha de comando.");
+		}
+		$cliente = $this->request->getGet('cliente'); // Captura o status da URL (GET)
+		$inicio = $this->request->getGet('inicio'); // Captura o inicio da URL (GET)
+		$fim = $this->request->getGet('fim'); // Captura o fim da URL (GET)
+		$equipamento = $this->request->getGet('equipamento'); // Captura o status da URL (GET)
+
+		$template = 'servicos';
+		$sessionAdmin_user_nivel = session()->get('admin_nivel');
+		if ($sessionAdmin_user_nivel == 'cliente') {
+			$template = 'servicos-cliente';
+		}
+
+		$query = $this->pendMD->from('tbl_pendencias As PEND', true)
+			->select('PEND.pend_id, CLIE.clie_nome_razao, PEND.pend_dte_instalacao')
+			->select('TAG.pendtag_tag, TAG.pendtag_descricao, SERV.categ_titulo AS tipo, CATEG.categ_titulo ')
+			->join('tbl_pendencias_tags TAG', 'TAG.pend_id = PEND.pend_id', 'LEFT')
+			->join('tbl_categorias SERV', 'SERV.categ_id = TAG.pendtag_tipo_serv', 'LEFT')
+			->join('tbl_categorias CATEG', 'CATEG.categ_id = TAG.pendtag_status', 'LEFT')
+			->join('tbl_clientes CLIE', 'CLIE.clie_id = PEND.clie_id', 'LEFT');
+
+
+		$query2 = $this->pendMD2->from('tbl_pendencias As PEND', true)
+			->select('PEND.pend_id, CLIE.clie_nome_razao, PEND.pend_dte_instalacao')
+			->select('MAT.pend_mat_qtd, MAT.pend_mat_eqto, MAT.pend_mat_material, MAT.pend_mat_observacoes')
+			->join('tbl_pendencias_materiais MAT', 'MAT.pend_id = PEND.pend_id', 'LEFT')
+			->join('tbl_clientes CLIE', 'CLIE.clie_id = PEND.clie_id', 'LEFT')
+			->where('MAT.pend_mat_tipo', 'Utilizado');
+
+		$query3 = $this->pendMD3->from('tbl_pendencias As PEND', true)
+			->select('PEND.pend_id, CLIE.clie_nome_razao, PEND.pend_dte_instalacao')
+			->select('MAT.pend_mat_qtd, MAT.pend_mat_eqto, MAT.pend_mat_material, 
+			MAT.pend_mat_observacoes, MAT.pend_mat_dte_compra, MAT.pend_mat_dte_disponivel, MAT.pend_mat_dte_utilizado')
+			->join('tbl_pendencias_materiais MAT', 'MAT.pend_id = PEND.pend_id', 'LEFT')
+			->join('tbl_clientes CLIE', 'CLIE.clie_id = PEND.clie_id', 'LEFT')
+			->where('MAT.pend_mat_tipo', 'Solicitado');
+
+
+		if ($sessionAdmin_user_nivel == 'cliente') {
+			$clie_id = (int)session()->get('admin_id');
+			$this->pendMD->where('PEND.clie_id', $clie_id);
+		}
+
+		// Aplica o filtro de status se ele for informado
+		if (!empty($cliente)) {
+			$query->where('PEND.clie_id', $cliente);
+			$query2->where('PEND.clie_id', $cliente);
+			$query3->where('PEND.clie_id', $cliente);
+		}
+
+		if (!empty($periodicidade)) {
+			$query->where('PEND.finc_periodicidade', $periodicidade);
+			$query2->where('PEND.finc_periodicidade', $periodicidade);
+			$query3->where('PEND.finc_periodicidade', $periodicidade);
+		}
+		if (!empty($inicio)) {
+			$query->where('DATE(PEND.pend_dte_instalacao) >=', date('Y-m-d', strtotime($inicio)));
+			$query2->where('DATE(PEND.pend_dte_instalacao) >=', date('Y-m-d', strtotime($inicio)));
+			$query3->where('DATE(PEND.pend_dte_instalacao) >=', date('Y-m-d', strtotime($inicio)));
+		}
+		if (!empty($fim)) {
+			$query->where('DATE(PEND.pend_dte_instalacao) <=', date('Y-m-d', strtotime($fim)));
+			$query2->where('DATE(PEND.pend_dte_instalacao) <=', date('Y-m-d', strtotime($fim)));
+			$query3->where('DATE(PEND.pend_dte_instalacao) <=', date('Y-m-d', strtotime($fim)));
+		}
+		if (!empty($equipamento)) {
+			$query->like('TAG.pendtag_tag', $equipamento);
+		}
+
+
+		$query = $this->pendMD->orderBy('PEND.pend_id', 'DESC');
+		$query2 = $this->pendMD2->orderBy('PEND.pend_id', 'DESC');
+		$query3 = $this->pendMD3->orderBy('PEND.pend_id', 'DESC');
+		$result = $query->get();
+		$result2 = $query2->get();
+		$result3 = $query3->get();
+
+		if ($result && $result->getNumRows() >= 1) {
+			$spreadsheet = new Spreadsheet();
+			$sheet = $spreadsheet->getActiveSheet();
+			$sheet->setTitle('Equipamentos');
+			// Definir cabeçalhos
+			$cabecalho = [
+				'ID',
+				'Cliente',
+				'Data da execução',
+				'Equipamento',
+				'Descrição',
+				'Tipo',
+				'Status'
+			];
+			$sheet->fromArray([$cabecalho], NULL, 'A1');
+
+			// Inserir dados
+			$dados = $result->getResultArray();
+			$sheet->fromArray($dados, NULL, 'A2');
+			// 🟠 Segunda aba (Materiais Utilizados)
+			if ($result2 && $result2->getNumRows() >= 1) {
+				$spreadsheet->createSheet();
+				$sheet2 = $spreadsheet->setActiveSheetIndex(1);
+				$sheet2->setTitle('Materiais Utilizados');
+
+				// Definir cabeçalhos
+				$cabecalho2 = [
+					'ID',
+					'Cliente',
+					'Data da execução',
+					'Quantidade',
+					'Equipamento',
+					'Tipo',
+					'Comentário'
+				];
+				$sheet2->fromArray([$cabecalho2], NULL, 'A1');
+
+				// Inserir dados
+				$dados2 = $result2->getResultArray();
+				$sheet2->fromArray($dados2, NULL, 'A2');
+			}
+			// 🟠 Terceira aba (Materiais Solicitados)
+			if ($result3 && $result3->getNumRows() >= 1) {
+				$spreadsheet->createSheet();
+				$sheet3 = $spreadsheet->setActiveSheetIndex(2);
+				$sheet3->setTitle('Materiais Solicitados');
+
+				// Definir cabeçalhos
+				$cabecalho3 = [
+					'ID',
+					'Cliente',
+					'Data da execução',
+					'Quantidade',
+					'Equipamento',
+					'Tipo',
+					'Comentário',
+					'Data da compra',
+					'Data Disponível',
+					'Data Utilizado'
+				];
+				$sheet3->fromArray([$cabecalho3], NULL, 'A1');
+
+				// Inserir dados
+				$dados3 = $result3->getResultArray();
+				$sheet3->fromArray($dados3, NULL, 'A2');
+			}
+
+			// Voltar para a primeira aba antes de salvar
+			$spreadsheet->setActiveSheetIndex(0);
+
+			// Definir cabeçalhos para download
+			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			header('Content-Disposition: attachment; filename="relatorio.xlsx"');
+			header('Cache-Control: max-age=0');
+
+			$writer = new Xlsx($spreadsheet);
+			$writer->save('php://output');
+			exit;
+		} else {
+			return redirect()->to(site_url($template))->with('error', 'Nenhum registro encontrado para exportação.');
 		}
 	}
 }
