@@ -110,6 +110,7 @@ $this->section('content');
 															<th style="width:60px;">Executado em</th>
 															<th>Status/Tag</th>
 															<th style="max-width:200px;">Descrição</th>
+															<th>Visualização Cliente</th>
 														</tr>
 													</thead>
 													<tbody>
@@ -134,6 +135,13 @@ $this->section('content');
 																	<div><?php echo $row->pendtag_tags; ?></div>
 																</td>
 																<td><?php echo $row->pendtag_descricao; ?></td>
+																<td><?php
+																	if ($row->pend_status == 0) {
+																		echo '<span class="badge bg-success">Liberado</span>';
+																	} elseif ($row->pend_status == 1) {
+																		echo '<span class="badge bg-warning">Pendente</span>';
+																	}
+																	?></td>
 															</tr>
 														<?php } ?>
 													</tbody>

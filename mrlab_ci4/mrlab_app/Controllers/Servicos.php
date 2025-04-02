@@ -82,10 +82,12 @@ class Servicos extends PainelController
 		if ($sessionAdmin_user_nivel == 'cliente') {
 			$clie_id = (int)session()->get('admin_id');
 			$this->pendMD->where('PEND.clie_id', $clie_id);
+			$this->pendMD->where('PEND.pend_status', 0);
 		}
 		if ($sessionAdmin_user_nivel == 'cliente_raiz') {
 			$clie_id = (int)session()->get('admin_id');
 			$this->pendMD->where('CLIE.clie_raiz_id', $clie_id);
+			$this->pendMD->where('PEND.pend_status', 0);
 		}
 
 		// Aplica o filtro de status se ele for informado
@@ -164,7 +166,8 @@ class Servicos extends PainelController
 			->join('tbl_categorias CATEG', 'CATEG.categ_id = TAG.pendtag_status', 'LEFT')
 			->join('tbl_clientes CLIE', 'CLIE.clie_id = PEND.clie_id', 'LEFT')
 			->groupBy('PEND.pend_id')
-			->orderBy('PEND.pend_id', 'DESC');
+			->orderBy('PEND.pend_id', 'DESC')
+			->where('PEND.pend_status', 0);
 
 		if ($clienteId) {
 			$query->where('PEND.clie_id', $clienteId);
@@ -301,7 +304,7 @@ class Servicos extends PainelController
 					//'eqto_urlpage' => url_title( convert_accented_characters($eqto_titulo), '-', TRUE ),
 					//'pend_dte_registro' => fct_date2bd($pend_dte_registro),
 					//'pend_tipo_serv' => $pend_tipo_serv,
-					//'pend_status' => $pend_status,
+					'pend_status' => $pend_status,
 					'pend_num_os' => $pend_num_os,
 					//'pend_descricao' => $pend_descricao,
 					'pend_tag' => $pend_tag,
@@ -996,6 +999,7 @@ class Servicos extends PainelController
 		if ($sessionAdmin_user_nivel == 'cliente') {
 			$clie_id = (int)session()->get('admin_id');
 			$this->pendMD->where('PEND.clie_id', $clie_id);
+			$this->pendMD->where('PEND.pend_status', 0);
 		}
 
 		// Aplica o filtro de status se ele for informado
